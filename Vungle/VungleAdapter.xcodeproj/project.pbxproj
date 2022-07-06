@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		404E70D92875A90E00A32075 /* VungleSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 404E70D82875A90E00A32075 /* VungleSDK.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6A561CE0219BB5A600E3749A /* AppLovinSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D31B64D219BA4E600875D92 /* AppLovinSDK.framework */; };
 		6A9A772A21A4F43A00151D7A /* ALVungleMediationAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9A772821A4F43A00151D7A /* ALVungleMediationAdapter.m */; };
+		8F3BA38E236195DEE24CF4D1 /* Pods_VungleAdapter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AC6A3060754CF4D15007EFF /* Pods_VungleAdapter.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05CC3F0B52F883379316D891 /* Pods-VungleAdapter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VungleAdapter.release.xcconfig"; path = "Target Support Files/Pods-VungleAdapter/Pods-VungleAdapter.release.xcconfig"; sourceTree = "<group>"; };
 		1D31B64D219BA4E600875D92 /* AppLovinSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AppLovinSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D9AE8E221423C7D00080475 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1D9AE8E321423C7D00080475 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
@@ -40,11 +43,14 @@
 		1D9AE8ED21423C7E00080475 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1D9AE8EE21423C7E00080475 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1D9AE8FC21423C9200080475 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		404E70D82875A90E00A32075 /* VungleSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = VungleSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A561CE5219BB5A600E3749A /* libVungleAdapter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVungleAdapter.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A5A633A21C0875E00B755D7 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		6A5A633B21C0875E00B755D7 /* AppLovinMediationVungleAdapter.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppLovinMediationVungleAdapter.podspec; sourceTree = "<group>"; };
 		6A9A772821A4F43A00151D7A /* ALVungleMediationAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALVungleMediationAdapter.m; sourceTree = "<group>"; };
 		6A9A772921A4F43A00151D7A /* ALVungleMediationAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALVungleMediationAdapter.h; sourceTree = "<group>"; };
+		888C81BC67F102B4B89FB879 /* Pods-VungleAdapter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VungleAdapter.debug.xcconfig"; path = "Target Support Files/Pods-VungleAdapter/Pods-VungleAdapter.debug.xcconfig"; sourceTree = "<group>"; };
+		9AC6A3060754CF4D15007EFF /* Pods_VungleAdapter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VungleAdapter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +59,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A561CE0219BB5A600E3749A /* AppLovinSDK.framework in Frameworks */,
+				8F3BA38E236195DEE24CF4D1 /* Pods_VungleAdapter.framework in Frameworks */,
+				404E70D92875A90E00A32075 /* VungleSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +70,7 @@
 		1D2303A61FBCF4C7001939D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				404E70D82875A90E00A32075 /* VungleSDK.framework */,
 				1D31B64D219BA4E600875D92 /* AppLovinSDK.framework */,
 				1D9AE8FC21423C9200080475 /* QuartzCore.framework */,
 				1D9AE8EB21423C7E00080475 /* AdSupport.framework */,
@@ -77,6 +86,7 @@
 				1D9AE8EA21423C7E00080475 /* SystemConfiguration.framework */,
 				1D9AE8E821423C7E00080475 /* UIKit.framework */,
 				1D9AE8E721423C7E00080475 /* WebKit.framework */,
+				9AC6A3060754CF4D15007EFF /* Pods_VungleAdapter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -88,6 +98,7 @@
 				6A5A632921C086CF00B755D7 /* Supporting Files */,
 				1D97FB861FBCF38B00D6C309 /* Products */,
 				1D2303A61FBCF4C7001939D7 /* Frameworks */,
+				F5CC99F54C6E8905854A3D63 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -117,6 +128,16 @@
 			path = VungleAdapter;
 			sourceTree = "<group>";
 		};
+		F5CC99F54C6E8905854A3D63 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				888C81BC67F102B4B89FB879 /* Pods-VungleAdapter.debug.xcconfig */,
+				05CC3F0B52F883379316D891 /* Pods-VungleAdapter.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../../Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -124,6 +145,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6A561CE2219BB5A600E3749A /* Build configuration list for PBXNativeTarget "VungleAdapter" */;
 			buildPhases = (
+				BCD8677E0029F7C4104F9319 /* [CP] Check Pods Manifest.lock */,
 				6A561CDD219BB5A600E3749A /* Sources */,
 				6A561CDF219BB5A600E3749A /* Frameworks */,
 				6A561CE1219BB5A600E3749A /* Copy Files */,
@@ -168,6 +190,31 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BCD8677E0029F7C4104F9319 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VungleAdapter-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6A561CDD219BB5A600E3749A /* Sources */ = {
@@ -300,18 +347,34 @@
 		};
 		6A561CE3219BB5A600E3749A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 888C81BC67F102B4B89FB879 /* Pods-VungleAdapter.debug.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X8JXXK4FF5;
 				EXCLUDED_ARCHS = i386;
-				FRAMEWORK_SEARCH_PATHS = "../../iOS-Workspace/Pods/**";
-				HEADER_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../../Vungle_SDK/build/Debug-iphonesimulator/**",
+					"../../iOS-Workspace/Pods/**",
+					"$(inherited)",
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphonesimulator/**",
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphoneos/**",
+				);
+				HEADER_SEARCH_PATHS = (
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphonesimulator/**",
+					"$(inherited)",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphonesimulator/**",
+				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-fembed-bitcode-marker";
+				OTHER_CFLAGS = (
+					"-fembed-bitcode-marker",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -322,18 +385,31 @@
 		};
 		6A561CE4219BB5A600E3749A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 05CC3F0B52F883379316D891 /* Pods-VungleAdapter.release.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = X8JXXK4FF5;
 				EXCLUDED_ARCHS = i386;
-				FRAMEWORK_SEARCH_PATHS = "../../iOS-Workspace/Pods/**";
-				HEADER_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"../../iOS-Workspace/Pods/**",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphonesimulator/**",
+					"$(inherited)",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"../../iOS-Workspace/Vungle_SDK/build/Debug-iphonesimulator/**",
+				);
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-fembed-bitcode";
+				OTHER_CFLAGS = (
+					"-fembed-bitcode",
+					"$(inherited)",
+				);
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
