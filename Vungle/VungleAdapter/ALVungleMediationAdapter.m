@@ -23,10 +23,24 @@
 - (nullable NSNumber *)privacySettingForSelector:(SEL)selector fromParameters:(id<MAAdapterParameters>)parameters;
 @end
 
+@interface ALVungleMediationNativeAdAdapter : NSObject<VungleNativeAdDelegate>
+@property (nonatomic, strong) VungleNativeAd *vungleNativeAd;
+@property (nonatomic, strong) id<MANativeAdAdapterDelegate> nativeAdDelegate;
+- (nonnull instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate;
+- (void)requestNativeAd:(NSString *)placementIdentifier;
+- (void)unregisterNativeAd;
+@end
+
+@interface MAVungleNativeAd : MANativeAd
+@property (nonatomic, weak) ALVungleMediationNativeAdAdapter *parentAdapter;
+- (instancetype)initWithParentAdapter:(ALVungleMediationNativeAdAdapter *)parentAdapter builderBlock:(NS_NOESCAPE MANativeAdBuilderBlock)builderBlock;
+@end
+
 @interface ALVungleMediationAdapter()
 @property (nonatomic, strong, readonly) ALVungleMediationAdapterRouter *router;
 @property (nonatomic, copy) NSString *placementIdentifier;
 @property (nonatomic, strong) UIView *adView;
+@property (nonatomic, strong) ALVungleMediationNativeAdAdapter *nativeAdAdapter;
 @end
 
 @implementation ALVungleMediationAdapter
@@ -422,6 +436,31 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     else
     {
         [delegate didLoadAdForAdView: self.adView];
+    }
+}
+
+#pragma mark - MANativeAdAdapter Methods
+
+- (void)loadNativeAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MANativeAdAdapterDelegate>)delegate
+{
+    self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
+    [self log: @"Loading Native ad for placement: %@...", self.placementIdentifier];
+    
+    if ( ![[VungleSDK sharedSDK] isInitialized] )
+    {
+        [self log: @"Vungle SDK not successfully initialized: failing Native ad load..."];
+        [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
+        return;
+    }
+    self.nativeAdAdapter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate];
+    [self.nativeAdAdapter requestNativeAd: self.placementIdentifier];
+}
+
+- (void)closeNativeAdView
+{
+    if (self.nativeAdAdapter)
+    {
+        [self.nativeAdAdapter unregisterNativeAd];
     }
 }
 
@@ -874,6 +913,135 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         self.creativeIdentifiers[placementID] = creativeID;
     }
+}
+
+@end
+
+@implementation ALVungleMediationNativeAdAdapter
+
+- (instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate
+{
+    self = [super init];
+    if ( self )
+    {
+        self.nativeAdDelegate = nativeAdDelegate;
+    }
+    return self;
+}
+
+- (void)requestNativeAd:(NSString *)placementIdentifier
+{
+    if ( ![[VungleSDK sharedSDK] isInitialized] )
+    {
+      return;
+    }
+    [self loadVungleNativeAd: placementIdentifier];
+}
+
+- (void)playNativeAd
+{
+    if ( !self.vungleNativeAd )
+    {
+        [self.nativeAdDelegate didFailToLoadNativeAdWithError: MAAdapterError.noFill];
+    }
+    dispatchOnMainQueue(^{
+        MANativeAd *maNativeAd = [[MAVungleNativeAd alloc] initWithParentAdapter: self builderBlock: ^(MANativeAdBuilder * _Nonnull builder) {
+            VungleMediaView *mediaView = [[VungleMediaView alloc] init];
+            builder.mediaView = mediaView;
+            builder.title = self.vungleNativeAd.title;
+            builder.body = self.vungleNativeAd.bodyText;
+            builder.callToAction = self.vungleNativeAd.callToAction;
+            builder.icon = [[MANativeAdImage alloc] initWithImage: self.vungleNativeAd.iconImage];
+        }];
+        [self.nativeAdDelegate didLoadAdForNativeAd: maNativeAd withExtraInfo: nil];
+    });
+}
+
+- (void)unregisterNativeAd
+{
+    if ( self.vungleNativeAd )
+    {
+        [self.vungleNativeAd unregisterView];
+    }
+}
+
+- (void)loadVungleNativeAd:(NSString *)placementIdentifier
+{
+    self.vungleNativeAd = [[VungleNativeAd alloc] initWithPlacementID: placementIdentifier];
+    self.vungleNativeAd.delegate = self;
+    self.vungleNativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
+    [self.vungleNativeAd loadAd];
+}
+
+- (void)nativeAdDidLoad:(VungleNativeAd *)vungleNativeAd
+{
+    [self playNativeAd];
+}
+
+- (void)vungleNativeAd:(VungleNativeAd *)vungleNativeAd didFailWithError:(NSError *)error
+{
+    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error];
+    [self.nativeAdDelegate didFailToLoadNativeAdWithError: adapterError];
+}
+
+- (void)nativeAdDidClick:(VungleNativeAd *)vungleNativeAd
+{
+    [self.nativeAdDelegate didClickNativeAd];
+}
+
+- (void)nativeAdDidTrackImpression:(VungleNativeAd *)vungleNativeAd
+{
+    [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: nil];
+}
+
+@end
+
+@implementation MAVungleNativeAd
+
+- (instancetype)initWithParentAdapter:(ALVungleMediationNativeAdAdapter *)parentAdapter builderBlock:(NS_NOESCAPE MANativeAdBuilderBlock)builderBlock
+{
+    self = [super initWithFormat: MAAdFormat.native builderBlock: builderBlock];
+    if ( self )
+    {
+        self.parentAdapter = parentAdapter;
+    }
+    return self;
+}
+
+- (void)prepareViewForInteraction:(MANativeAdView *)nativeAdView
+{
+    if ( !self.parentAdapter.vungleNativeAd )
+    {
+        return;
+    }
+    
+    NSMutableArray *clickableViews = [NSMutableArray array];
+    if ( [self.title al_isValidString] && nativeAdView.titleLabel )
+    {
+        [clickableViews addObject: nativeAdView.titleLabel];
+    }
+    if ( [self.body al_isValidString] && nativeAdView.bodyLabel )
+    {
+        [clickableViews addObject: nativeAdView.bodyLabel];
+    }
+    if ( [self.callToAction al_isValidString] && nativeAdView.callToActionButton )
+    {
+        [clickableViews addObject: nativeAdView.callToActionButton];
+    }
+    if ( self.icon && nativeAdView.iconImageView )
+    {
+        [clickableViews addObject: nativeAdView.iconImageView];
+    }
+    if ( self.mediaView && nativeAdView.mediaContentView )
+    {
+        [clickableViews addObject: nativeAdView.mediaContentView];
+    }
+    
+    [self.parentAdapter.vungleNativeAd registerViewForInteraction: nativeAdView
+                                                        mediaView: (VungleMediaView *) self.mediaView
+                                                    iconImageView: nativeAdView.iconImageView
+                                                   viewController: [ALUtils topViewControllerFromKeyWindow]
+                                                   clickableViews: clickableViews];
 }
 
 @end
