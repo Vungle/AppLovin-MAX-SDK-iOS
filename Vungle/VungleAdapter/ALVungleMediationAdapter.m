@@ -139,7 +139,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     [self log: @"Collecting signal..."];
     
-    NSString *signal = [[VungleSDK sharedSDK] currentSuperToken];
+    NSString *signal = [[VungleSDK sharedSDK] currentSuperTokenForPlacementID:nil forSize:0];
     [delegate didCollectSignal: signal];
 }
 
@@ -221,7 +221,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( !willShow || error )
     {
-        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" thirdPartySdkErrorCode: error.code thirdPartySdkErrorMessage: error.localizedDescription];
+        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: error.code mediatedNetworkErrorMessage: error.localizedDescription];;
         [self log: @"Interstitial ad failed to display with error: %@", adapterError];
         [self.router didFailToDisplayAdForPlacementIdentifier: placementIdentifier error: adapterError];
     }
@@ -307,7 +307,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( !willShow || error )
     {
-        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" thirdPartySdkErrorCode: error.code thirdPartySdkErrorMessage: error.localizedDescription];
+        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: error.code mediatedNetworkErrorMessage: error.localizedDescription];
         [self log: @"Rewarded ad failed to display with error: %@", adapterError];
         [self.router didFailToDisplayAdForPlacementIdentifier: placementIdentifier error: adapterError];
     }
@@ -429,7 +429,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( !willShow || error )
     {
-        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" thirdPartySdkErrorCode: error.code thirdPartySdkErrorMessage: error.localizedDescription];
+        MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: error.code mediatedNetworkErrorMessage: error.localizedDescription];
         [self log: @"%@ ad failed to display with error: %@", adFormatLabel, adapterError];
         [self.router didFailToDisplayAdForPlacementIdentifier: placementIdentifier error: adapterError];
     }
@@ -454,14 +454,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     self.nativeAdAdapter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate];
     [self.nativeAdAdapter requestNativeAd: self.placementIdentifier];
-}
-
-- (void)closeNativeAdView
-{
-    if (self.nativeAdAdapter)
-    {
-        [self.nativeAdAdapter unregisterNativeAd];
-    }
 }
 
 #pragma mark - Shared Methods
