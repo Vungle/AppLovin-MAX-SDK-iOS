@@ -26,7 +26,8 @@
 @interface ALVungleMediationNativeAdAdapter : NSObject<VungleNativeAdDelegate>
 @property (nonatomic, strong) VungleNativeAd *vungleNativeAd;
 @property (nonatomic, strong) id<MANativeAdAdapterDelegate> nativeAdDelegate;
-- (nonnull instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate;
+@property (nonatomic, strong) id<MAAdapterResponseParameters> parameters;
+- (nonnull instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate parameters:(id<MAAdapterResponseParameters>)parameters;
 - (void)requestNativeAd:(NSString *)placementIdentifier;
 - (void)unregisterNativeAd;
 @end
@@ -452,7 +453,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
         return;
     }
-    self.nativeAdAdapter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate];
+    self.nativeAdAdapter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate parameters:parameters];
     [self.nativeAdAdapter requestNativeAd: self.placementIdentifier];
 }
 
@@ -542,19 +543,18 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( [serverParameters al_containsValueForKey: @"is_muted"] ) // Introduced in 6.10.0
     {
         BOOL muted = [serverParameters al_numberForKey: @"is_muted"].boolValue;
-        [VungleSDK sharedSDK].muted = muted;
-        
-        options[VunglePlayAdOptionKeyStartMuted] = @(muted);
+        // Overwritten by `mute_state` setting for Vungle only if YES,
+        // Publisher has to set change the value for SetMuted to NO at Vungle dashboard level for playing an ad with sound.
+        if ( muted )
+        {
+            [VungleSDK sharedSDK].muted = muted;
+            options[VunglePlayAdOptionKeyStartMuted] = @(muted);
+        }
     }
     
     if ( [serverParameters al_containsValueForKey: @"user_id"] )
     {
         options[VunglePlayAdOptionKeyUser] = [serverParameters al_stringForKey: @"user_id"];
-    }
-    
-    if ( [serverParameters al_containsValueForKey: @"ordinal"] )
-    {
-        options[VunglePlayAdOptionKeyOrdinal] = [serverParameters al_numberForKey: @"ordinal"];
     }
     
     if ( [serverParameters al_containsValueForKey: @"flex_view_auto_dismiss_seconds"] )
@@ -911,12 +911,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 @implementation ALVungleMediationNativeAdAdapter
 
-- (instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate
+- (instancetype)initVungleNativeAd:(id<MANativeAdAdapterDelegate>)nativeAdDelegate parameters:(id<MAAdapterResponseParameters>)parameters
 {
     self = [super init];
     if ( self )
     {
         self.nativeAdDelegate = nativeAdDelegate;
+        self.parameters = parameters;
     }
     return self;
 }
@@ -962,7 +963,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.vungleNativeAd = [[VungleNativeAd alloc] initWithPlacementID: placementIdentifier];
     self.vungleNativeAd.delegate = self;
     self.vungleNativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
-    [self.vungleNativeAd loadAd];
+    [self.vungleNativeAd loadAdWithAdMarkup:self.parameters.bidResponse];
 }
 
 - (void)nativeAdDidLoad:(VungleNativeAd *)vungleNativeAd
