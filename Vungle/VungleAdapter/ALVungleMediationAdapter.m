@@ -73,13 +73,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         NSString *appID = [parameters.serverParameters al_stringForKey: @"app_id"];
         [self log: @"Initializing Vungle SDK with app id: %@...", appID];
         
-        // NOTE: Vungle's SDK will log error if setting COPPA state after it initializes.
-        NSNumber *isAgeRestrictedUser = [self.router privacySettingForSelector: @selector(isAgeRestrictedUser) fromParameters: parameters];
-        if ( isAgeRestrictedUser )
-        {
-            [[VungleSDK sharedSDK] updateCOPPAStatus: isAgeRestrictedUser.boolValue];
-        }
-        
         [VungleSDK sharedSDK].delegate = self.router;
         [VungleSDK sharedSDK].creativeTrackingDelegate = self.router;
         [VungleSDK sharedSDK].sdkHBDelegate = self.router;
@@ -444,6 +437,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)loadNativeAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MANativeAdAdapterDelegate>)delegate
 {
+    [self.router updateUserPrivacySettingsForParameters: parameters consentDialogState: self.sdk.configuration.consentDialogState];
     self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading Native ad for placement: %@...", self.placementIdentifier];
     
@@ -682,6 +676,14 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
             VungleCCPAStatus ccpaStatus = isDoNotSell.boolValue ? VungleCCPADenied : VungleCCPAAccepted;
             [[VungleSDK sharedSDK] updateCCPAStatus: ccpaStatus];
         }
+    }
+    
+    // NOTE: Vungle's SDK Supports setting COPPA state after it initializes.
+    // This way when the consent changes in middle of session Vungle SDK updates based on it.
+    NSNumber *isAgeRestrictedUser = [self privacySettingForSelector: @selector(isAgeRestrictedUser) fromParameters: parameters];
+    if ( isAgeRestrictedUser )
+    {
+        [[VungleSDK sharedSDK] updateCOPPAStatus: isAgeRestrictedUser.boolValue];
     }
 }
 
