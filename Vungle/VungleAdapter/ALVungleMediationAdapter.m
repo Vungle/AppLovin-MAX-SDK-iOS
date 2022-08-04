@@ -133,7 +133,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     [self log: @"Collecting signal..."];
     
-    NSString *signal = [[VungleSDK sharedSDK] currentSuperTokenForPlacementID:nil forSize:0];
+    NSString *signal = [[VungleSDK sharedSDK] currentSuperTokenForPlacementID: nil forSize: 0];
     [delegate didCollectSignal: signal];
 }
 
