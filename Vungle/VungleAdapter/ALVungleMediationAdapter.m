@@ -41,7 +41,7 @@
 @property (nonatomic, strong, readonly) ALVungleMediationAdapterRouter *router;
 @property (nonatomic, copy) NSString *placementIdentifier;
 @property (nonatomic, strong) UIView *adView;
-@property (nonatomic, strong) ALVungleMediationNativeAdAdapter *nativeAdAdapter;
+@property (nonatomic, strong) ALVungleMediationNativeAdAdapter *nativeAdRouter;
 @end
 
 @implementation ALVungleMediationAdapter
@@ -437,7 +437,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)loadNativeAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MANativeAdAdapterDelegate>)delegate
 {
-    [self.router updateUserPrivacySettingsForParameters: parameters consentDialogState: self.sdk.configuration.consentDialogState];
     self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading Native ad for placement: %@...", self.placementIdentifier];
     
@@ -447,8 +446,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
         return;
     }
-    self.nativeAdAdapter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate parameters:parameters];
-    [self.nativeAdAdapter requestNativeAd: self.placementIdentifier];
+    
+    [self.router updateUserPrivacySettingsForParameters: parameters consentDialogState: self.sdk.configuration.consentDialogState];
+    self.nativeAdRouter = [[ALVungleMediationNativeAdAdapter alloc] initVungleNativeAd: delegate parameters:parameters];
+    [self.nativeAdRouter requestNativeAd: self.placementIdentifier];
 }
 
 #pragma mark - Shared Methods
@@ -538,7 +539,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         BOOL muted = [serverParameters al_numberForKey: @"is_muted"].boolValue;
         // Overwritten by `mute_state` setting for Vungle only if YES,
-        // Publisher has to set change the value for SetMuted to NO at Vungle dashboard level for playing an ad with sound.
+        // If the publisher wants the ad to play with sound, the publisher should not set this property.
         if ( muted )
         {
             [VungleSDK sharedSDK].muted = muted;
@@ -928,6 +929,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     if ( ![[VungleSDK sharedSDK] isInitialized] )
     {
+        [self.nativeAdDelegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
       return;
     }
     [self loadVungleNativeAd: placementIdentifier];
@@ -938,6 +940,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( !self.vungleNativeAd )
     {
         [self.nativeAdDelegate didFailToLoadNativeAdWithError: MAAdapterError.noFill];
+        return;
     }
     dispatchOnMainQueue(^{
         MANativeAd *maNativeAd = [[MAVungleNativeAd alloc] initWithParentAdapter: self builderBlock: ^(MANativeAdBuilder * _Nonnull builder) {
