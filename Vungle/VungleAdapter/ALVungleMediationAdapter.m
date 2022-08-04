@@ -538,7 +538,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( [serverParameters al_containsValueForKey: @"is_muted"] ) // Introduced in 6.10.0
     {
         BOOL muted = [serverParameters al_numberForKey: @"is_muted"].boolValue;
-        // Overwritten by `mute_state` setting for Vungle only if YES,
+        // The mute status for Vungle will only be overwritten if YES.
         // If the publisher wants the ad to play with sound, the publisher should not set this property.
         if ( muted )
         {
@@ -680,7 +680,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     
     // NOTE: Vungle's SDK Supports setting COPPA state after it initializes.
-    // This way when the consent changes in middle of session Vungle SDK updates based on it.
+    // This way the Vungle SDK can handle consent status changes during a session.
     NSNumber *isAgeRestrictedUser = [self privacySettingForSelector: @selector(isAgeRestrictedUser) fromParameters: parameters];
     if ( isAgeRestrictedUser )
     {
@@ -930,7 +930,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( ![[VungleSDK sharedSDK] isInitialized] )
     {
         [self.nativeAdDelegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
-      return;
+        return;
     }
     [self loadVungleNativeAd: placementIdentifier];
 }
@@ -968,7 +968,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.vungleNativeAd = [[VungleNativeAd alloc] initWithPlacementID: placementIdentifier];
     self.vungleNativeAd.delegate = self;
     self.vungleNativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
-    [self.vungleNativeAd loadAdWithAdMarkup:self.parameters.bidResponse];
+    [self.vungleNativeAd loadAdWithAdMarkup: self.parameters.bidResponse];
 }
 
 - (void)nativeAdDidLoad:(VungleNativeAd *)vungleNativeAd
