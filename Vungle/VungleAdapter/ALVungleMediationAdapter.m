@@ -113,10 +113,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
 }
 
-//- (NSString *)SDKVersion
-//{
-//    return VungleSDKVersion;
-//}
+- (NSString *)SDKVersion
+{
+    return [Vungle sdkVersion];
+}
 
 - (NSString *)adapterVersion
 {
