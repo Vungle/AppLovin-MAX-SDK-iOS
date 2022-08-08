@@ -33,6 +33,7 @@
 @property (nonatomic, strong) id<MAAdapterResponseParameters> parameters;
 - (nonnull instancetype)initVungleAdViewAdDelegate:(id<MAAdViewAdapterDelegate>)adViewAdDelegate parentAdapter:(ALVungleMediationAdapter *)parentAdapter parameters:(id<MAAdapterResponseParameters>)parameters adFormat:(MAAdFormat *)adFormat;
 - (void)loadAdView:(NSString *)placementIdentifier;
+- (void)destroy;
 @end
 
 @interface ALVungleMediationNativeAdAdapter : NSObject<VungleNativeDelegate>
@@ -42,6 +43,7 @@
 - (nonnull instancetype)initVungleNativeAdDelegate:(id<MANativeAdAdapterDelegate>)nativeAdDelegate parameters:(id<MAAdapterResponseParameters>)parameters;
 - (void)requestNativeAd:(NSString *)placementIdentifier;
 - (void)unregisterNativeAd;
+- (void)destroy;
 @end
 
 @interface MAVungleNativeAd : MANativeAd
@@ -125,6 +127,19 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)destroy
 {
+    self.interstitialRouter.interstitialAdDelegate = nil;
+    self.vungleInterstitialAd = nil;
+    self.interstitialRouter = nil;
+    
+    self.rewardedRouter.rewardedAdDelegate = nil;
+    self.vungleRewardedVideoAd = nil;
+    self.rewardedRouter = nil;
+    
+    [self.bannerRouter destroy];
+    self.bannerRouter = nil;
+    
+    [self.nativeAdRouter destroy];
+    self.nativeAdRouter = nil;
 }
 
 #pragma mark - GDPR
@@ -355,8 +370,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     int vungleErrorCode = (int)vungleError.code;
     MAAdapterError *adapterError = MAAdapterError.unspecified;
     switch (vungleErrorCode) {
-        case 1: //genericInitializationError
-        case 5: //backendInitializeError
         case 6: //sdkNotInitialized
             adapterError = MAAdapterError.notInitialized;
             break;
@@ -365,7 +378,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 500: //bannerViewInvalidSize
             adapterError = MAAdapterError.invalidConfiguration;
             break;
-        case 116: //adResponseNoFill
         case 210: //adNotLoaded
             adapterError = MAAdapterError.noFill;
             break;
@@ -379,9 +391,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 103: //apiResponseDecodeError
         case 104: //apiFailedStatusCode
         case 105: //invalidTemplateURL
-        case 106: //templateRequestError
-        case 107: //templateResponseDataError
-        case 108: //templateWriteError
         case 109: //templateUnzipError
         case 110: //assetPrepError
         case 111: //invalidAssetURL
@@ -393,32 +402,23 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 118: //templatePrepError
         case 119: //jsonEncodeError
         case 120: //jsonDecodeError
-        case 211: //preloadFailed
-        case 200: //genericAdLoadError
         case 202: //adConsumed
         case 203: //adIsLoading
         case 204: //adAlreadyLoaded
         case 205: //adIsPlaying
         case 206: //adAlreadyFailed
-        case 207: //mraidPreloadError
         case 208: //invalidBidPayload
-        case 209: //invalidAdsURL
-        case 300: //genericAdPlayError
         case 302: //invalidIfaStatus
         case 305: //mraidBridgeError
-        case 306: //presenterMissing
         case 400: //concurrentPlaybackUnsupported
         case 701: //mraidError
             adapterError = MAAdapterError.internalError;
             break;
-        case 301: //adHasntLoaded
         case 303: //adIsntReady
             adapterError = MAAdapterError.adNotReady;
             break;
         case 600: //nativeAssetError
-        case 601: //nativeImageFailure
         case 602: //nativeInvalidCtaURL
-        case 603: //nativeInvalidPrivacyURL
             adapterError = MAAdapterError.missingRequiredNativeAdAssets;
             break;
         default:
@@ -626,6 +626,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     return BannerSizeRegular;
 }
 
+- (void)destroy {
+    self.adView = nil;
+    self.adViewAdDelegate = nil;
+    self.vungleBannerAd = nil;
+}
+
 #pragma mark - VungleBannerDelegate
 
 - (void)bannerAdDidLoad:(VungleBanner * _Nonnull)banner
@@ -741,6 +747,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)nativeAdDidClick:(VungleNative * _Nonnull)native
 {
     [self.nativeAdDelegate didClickNativeAd];
+}
+
+- (void)destroy {
+    self.nativeAdDelegate = nil;
+    [self unregisterNativeAd];
+    self.vungleNativeAd = nil;
 }
 
 @end
