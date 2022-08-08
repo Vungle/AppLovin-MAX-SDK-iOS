@@ -11,6 +11,9 @@
 
 #define ADAPTER_VERSION @"7.0.0.0"
 
+int const kALSdkVersionCode =  11020199;
+int const kALErrorCode =  -4205;
+
 @interface ALVungleMediationInterstitialAdapterRouter : NSObject<VungleInterstitialDelegate>
 @property (nonatomic, weak) ALVungleMediationAdapter *parentAdapter;
 @property (nonatomic, strong) id<MAInterstitialAdapterDelegate> interstitialAdDelegate;
@@ -88,7 +91,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         NSString *appID = [parameters.serverParameters al_stringForKey: @"app_id"];
         [self log: @"Initializing Vungle SDK with app id: %@...", appID];
         
-        [Vungle setIntegrationName:@"max" version:ADAPTER_VERSION];
+        [Vungle setIntegrationName: @"max" version: ADAPTER_VERSION];
         [Vungle initWithAppId: appID completion: ^(NSError * _Nullable error) {
             if ( error )
             {
@@ -252,7 +255,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( self.vungleInterstitialAd && [self.vungleInterstitialAd canPlayAd] )
     {
         UIViewController *presentingViewController;
-        if ( ALSdk.versionCode >= 11020199 )
+        if ( ALSdk.versionCode >= kALSdkVersionCode )
         {
             presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
         }
@@ -260,7 +263,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         {
             presentingViewController = [ALUtils topViewControllerFromKeyWindow];
         }
-        [self.vungleInterstitialAd presentWith:presentingViewController];
+        [self.vungleInterstitialAd presentWith: presentingViewController];
     }
 }
 
@@ -307,7 +310,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( self.vungleRewardedVideoAd && [self.vungleRewardedVideoAd canPlayAd] )
     {
         UIViewController *presentingViewController;
-        if ( ALSdk.versionCode >= 11020199 )
+        if ( ALSdk.versionCode >= kALSdkVersionCode )
         {
             presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
         }
@@ -315,7 +318,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         {
             presentingViewController = [ALUtils topViewControllerFromKeyWindow];
         }
-        [self.vungleInterstitialAd presentWith: presentingViewController];
+        [self.vungleRewardedVideoAd presentWith: presentingViewController];
     }
 }
 
@@ -339,8 +342,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     [self updateUserPrivacySettingsForParameters: parameters consentDialogState: self.sdk.configuration.consentDialogState];
     
-    self.bannerRouter = [[ALVungleMediationAdViewAdapterRouter alloc] initVungleAdViewAdDelegate: delegate parentAdapter: self parameters: parameters adFormat:(MAAdFormat *)adFormat];
-    [self.bannerRouter loadAdView:placementIdentifier];
+    self.bannerRouter = [[ALVungleMediationAdViewAdapterRouter alloc] initVungleAdViewAdDelegate: delegate parentAdapter: self parameters: parameters adFormat: adFormat];
+    [self.bannerRouter loadAdView: placementIdentifier];
 }
 
 #pragma mark - MANativeAdAdapter Methods
@@ -470,7 +473,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];;
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];;
     [self.parentAdapter log: @"Interstitial ad failed to display with error: %@", adapterError];
     [self.interstitialAdDelegate didFailToDisplayInterstitialAdWithError: adapterError];
 }
@@ -522,7 +525,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)rewardedAdDidFailToPresent:(VungleRewarded * _Nonnull)rewarded withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
     [self.parentAdapter log: @"Rewarded ad failed to display with error: %@", adapterError];
     [self.rewardedAdDelegate didFailToDisplayRewardedAdWithError:adapterError];
 }
@@ -605,7 +608,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( [self.vungleBannerAd canPlayAd] )
     {
-        [self.vungleBannerAd presentOn:self.adView];
+        [self.vungleBannerAd presentOn: self.adView];
     }
 }
 
@@ -654,7 +657,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)bannerAdDidFailToPresent:(VungleBanner * _Nonnull)banner withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: -4205 errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
     [self.parentAdapter log: @"Banner ad failed to display with error: %@", adapterError];
     [self.adViewAdDelegate didFailToDisplayAdViewAdWithError: adapterError];
 }
@@ -725,7 +728,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.vungleNativeAd = [[VungleNative alloc] initWithPlacementId: placementIdentifier];
     self.vungleNativeAd.delegate = self;
     self.vungleNativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
-    [self.vungleNativeAd load:self.parameters.bidResponse];
+    [self.vungleNativeAd load: self.parameters.bidResponse];
 }
 
 - (void)nativeAdDidLoad:(VungleNative * _Nonnull)native
