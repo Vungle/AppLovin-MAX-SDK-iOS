@@ -570,6 +570,23 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.vungleBannerAd.delegate = self;
     self.vungleBannerAd.enableRefresh = NO;
     
+    if ( MAAdFormat.banner == self.adFormat )
+    {
+        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 320, 50)];
+    }
+    else if ( MAAdFormat.leader == self.adFormat )
+    {
+        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 728, 90)];
+    }
+    else if ( MAAdFormat.mrec == self.adFormat )
+    {
+        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 300, 250)];
+    }
+    else
+    {
+        [NSException raise: NSInvalidArgumentException format: @"Invalid ad format: %@", self.adFormat.label];
+    }
+    
     if ( [self.vungleBannerAd canPlayAd] )
     {
         [self showAdViewAdForParameters: self.parameters adFormat: self.adFormat];
@@ -588,23 +605,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *adFormatLabel = adFormat.label;
     NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self.parentAdapter log: @"Showing %@%@ ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), adFormatLabel, placementIdentifier];
-    
-    if ( MAAdFormat.banner == adFormat )
-    {
-        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 320, 50)];
-    }
-    else if ( MAAdFormat.leader == adFormat )
-    {
-        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 728, 90)];
-    }
-    else if ( MAAdFormat.mrec == adFormat )
-    {
-        self.adView = [[UIView alloc] initWithFrame: CGRectMake(0, 0, 300, 250)];
-    }
-    else
-    {
-        [NSException raise: NSInvalidArgumentException format: @"Invalid ad format: %@", adFormatLabel];
-    }
     
     if ( [self.vungleBannerAd canPlayAd] )
     {
