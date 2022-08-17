@@ -22,7 +22,6 @@ int const kALErrorCode =  -4205;
 
 @interface ALVungleMediationRewardedAdapterRouter : NSObject<VungleRewardedDelegate>
 @property (nonatomic, weak) ALVungleMediationAdapter *parentAdapter;
-@property (nonatomic, assign, getter=hasGrantedReward) BOOL grantedReward;
 @property (nonatomic, strong) id<MARewardedAdapterDelegate> rewardedAdDelegate;
 - (nonnull instancetype)initVungleRewardedAdDelegate:(id<MARewardedAdapterDelegate>)rewardedAdDelegate parentAdapter:(ALVungleMediationAdapter *)parentAdapter;
 @end
