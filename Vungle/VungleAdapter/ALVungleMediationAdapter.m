@@ -700,6 +700,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( !self.vungleNativeAd )
     {
         [self.nativeAdDelegate didFailToLoadNativeAdWithError: MAAdapterError.noFill];
+        return;
     }
     dispatchOnMainQueue(^{
         MANativeAd *maNativeAd = [[MAVungleNativeAd alloc] initWithParentAdapter: self builderBlock: ^(MANativeAdBuilder * _Nonnull builder) {
