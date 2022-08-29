@@ -438,7 +438,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidPresent:(VungleInterstitial * _Nonnull)interstitial
 {
-    [self.interstitialAdDelegate didDisplayInterstitialAd];
+    NSString *creativeIdentifier = interstitial.creativeId;
+    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    {
+        [self.interstitialAdDelegate didDisplayInterstitialAdWithExtraInfo: @{@"creative_id" : interstitial.creativeId}];
+    }
+    else
+    {
+        [self.interstitialAdDelegate didDisplayInterstitialAd];
+    }
 }
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
@@ -489,7 +497,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)rewardedAdDidPresent:(VungleRewarded * _Nonnull)rewarded
 {
-    [self.rewardedAdDelegate didDisplayRewardedAd];
+    NSString *creativeIdentifier = rewarded.creativeId;
+    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    {
+        [self.rewardedAdDelegate didDisplayRewardedAdWithExtraInfo: @{@"creative_id" : rewarded.creativeId}];
+    }
+    else
+    {
+        [self.rewardedAdDelegate didDisplayRewardedAd];
+    }
     [self.rewardedAdDelegate didStartRewardedAdVideo];
 }
 
@@ -622,7 +638,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)bannerAdDidPresent:(VungleBanner * _Nonnull)banner
 {
-    [self.adViewAdDelegate didDisplayAdViewAd];
+    NSString *creativeIdentifier = banner.creativeId;
+    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    {
+        [self.adViewAdDelegate didDisplayAdViewAdWithExtraInfo: @{@"creative_id" : banner.creativeId}];
+    }
+    else
+    {
+        [self.adViewAdDelegate didDisplayAdViewAd];
+    }
 }
 
 - (void)bannerAdDidFailToPresent:(VungleBanner * _Nonnull)banner withError:(NSError * _Nonnull)withError
@@ -715,7 +739,14 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)nativeAdDidTrackImpression:(VungleNative * _Nonnull)native
 {
-    [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: nil];
+    if ( ALSdk.versionCode >= 6150000 && [native.creativeId al_isValidString] )
+    {
+        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: @{@"creative_id" : native.creativeId}];
+    }
+    else
+    {
+        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: nil];
+    }
 }
 
 - (void)nativeAdDidClick:(VungleNative * _Nonnull)native
