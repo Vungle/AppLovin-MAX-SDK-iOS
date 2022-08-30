@@ -12,6 +12,7 @@
 #define ADAPTER_VERSION @"7.0.0.0"
 
 int const kALSdkVersionCode =  11020199;
+int const kALSdkVersionNeeded = 6150000;
 int const kALErrorCode =  -4205;
 
 @interface ALVungleMediationInterstitialAdapterRouter : NSObject<VungleInterstitialDelegate>
@@ -439,7 +440,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)interstitialAdDidPresent:(VungleInterstitial * _Nonnull)interstitial
 {
     NSString *creativeIdentifier = interstitial.creativeId;
-    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
         [self.interstitialAdDelegate didDisplayInterstitialAdWithExtraInfo: @{@"creative_id" : interstitial.creativeId}];
     }
@@ -498,7 +499,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)rewardedAdDidPresent:(VungleRewarded * _Nonnull)rewarded
 {
     NSString *creativeIdentifier = rewarded.creativeId;
-    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
         [self.rewardedAdDelegate didDisplayRewardedAdWithExtraInfo: @{@"creative_id" : rewarded.creativeId}];
     }
@@ -639,7 +640,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)bannerAdDidPresent:(VungleBanner * _Nonnull)banner
 {
     NSString *creativeIdentifier = banner.creativeId;
-    if ( ALSdk.versionCode >= 6150000 && [creativeIdentifier al_isValidString] )
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
         [self.adViewAdDelegate didDisplayAdViewAdWithExtraInfo: @{@"creative_id" : banner.creativeId}];
     }
@@ -739,9 +740,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)nativeAdDidTrackImpression:(VungleNative * _Nonnull)native
 {
-    if ( ALSdk.versionCode >= 6150000 && [native.creativeId al_isValidString] )
+    NSString *creativeIdentifier = native.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
-        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: @{@"creative_id" : native.creativeId}];
+        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
     }
     else
     {
