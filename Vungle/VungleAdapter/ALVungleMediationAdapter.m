@@ -442,7 +442,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *creativeIdentifier = interstitial.creativeId;
     if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
-        [self.interstitialAdDelegate didDisplayInterstitialAdWithExtraInfo: @{@"creative_id" : interstitial.creativeId}];
+        [self.interstitialAdDelegate didDisplayInterstitialAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
     }
     else
     {
@@ -501,7 +501,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *creativeIdentifier = rewarded.creativeId;
     if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
-        [self.rewardedAdDelegate didDisplayRewardedAdWithExtraInfo: @{@"creative_id" : rewarded.creativeId}];
+        [self.rewardedAdDelegate didDisplayRewardedAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
     }
     else
     {
@@ -642,7 +642,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *creativeIdentifier = banner.creativeId;
     if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
     {
-        [self.adViewAdDelegate didDisplayAdViewAdWithExtraInfo: @{@"creative_id" : banner.creativeId}];
+        [self.adViewAdDelegate didDisplayAdViewAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
     }
     else
     {
