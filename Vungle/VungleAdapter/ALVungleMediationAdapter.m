@@ -12,6 +12,7 @@
 #define ADAPTER_VERSION @"7.0.0.0"
 
 int const kALSdkVersionCode =  11020199;
+int const kALSdkVersionNeeded = 6150000;
 int const kALErrorCode =  -4205;
 
 @interface ALVungleMediationInterstitialAdapterRouter : NSObject<VungleInterstitialDelegate>
@@ -438,7 +439,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidPresent:(VungleInterstitial * _Nonnull)interstitial
 {
-    [self.interstitialAdDelegate didDisplayInterstitialAd];
+    NSString *creativeIdentifier = interstitial.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
+    {
+        [self.interstitialAdDelegate didDisplayInterstitialAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
+    }
+    else
+    {
+        [self.interstitialAdDelegate didDisplayInterstitialAd];
+    }
 }
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
@@ -489,7 +498,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)rewardedAdDidPresent:(VungleRewarded * _Nonnull)rewarded
 {
-    [self.rewardedAdDelegate didDisplayRewardedAd];
+    NSString *creativeIdentifier = rewarded.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
+    {
+        [self.rewardedAdDelegate didDisplayRewardedAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
+    }
+    else
+    {
+        [self.rewardedAdDelegate didDisplayRewardedAd];
+    }
     [self.rewardedAdDelegate didStartRewardedAdVideo];
 }
 
@@ -622,7 +639,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)bannerAdDidPresent:(VungleBanner * _Nonnull)banner
 {
-    [self.adViewAdDelegate didDisplayAdViewAd];
+    NSString *creativeIdentifier = banner.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
+    {
+        [self.adViewAdDelegate didDisplayAdViewAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
+    }
+    else
+    {
+        [self.adViewAdDelegate didDisplayAdViewAd];
+    }
 }
 
 - (void)bannerAdDidFailToPresent:(VungleBanner * _Nonnull)banner withError:(NSError * _Nonnull)withError
@@ -715,7 +740,15 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)nativeAdDidTrackImpression:(VungleNative * _Nonnull)native
 {
-    [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: nil];
+    NSString *creativeIdentifier = native.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
+    {
+        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
+    }
+    else
+    {
+        [self.nativeAdDelegate didDisplayNativeAdWithExtraInfo: nil];
+    }
 }
 
 - (void)nativeAdDidClick:(VungleNative * _Nonnull)native
