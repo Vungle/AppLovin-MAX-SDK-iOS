@@ -265,6 +265,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         }
         [self.vungleInterstitialAd presentWith: presentingViewController];
     }
+    else
+    {
+        [delegate didFailToDisplayInterstitialAdWithError: MAAdapterError.invalidLoadState];
+    }
 }
 
 #pragma mark - MARewardedAdapter Methods
@@ -319,6 +323,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
             presentingViewController = [ALUtils topViewControllerFromKeyWindow];
         }
         [self.vungleRewardedVideoAd presentWith: presentingViewController];
+    }
+    else
+    {
+        [delegate didFailToDisplayRewardedAdWithError: MAAdapterError.invalidLoadState];
     }
 }
 
@@ -519,6 +527,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)rewardedAdDidClose:(VungleRewarded * _Nonnull)rewarded
 {
+    [self.rewardedAdDelegate didCompleteRewardedAdVideo];
     [self.rewardedAdDelegate didHideRewardedAd];
 }
 
