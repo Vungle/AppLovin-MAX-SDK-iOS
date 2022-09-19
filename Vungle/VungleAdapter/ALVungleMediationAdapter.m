@@ -7,7 +7,7 @@
 //
 
 #import "ALVungleMediationAdapter.h"
-#import <VungleAds/VungleAds.h>
+#import <VungleAdsSDK/VungleAdsSDK.h>
 
 #define ADAPTER_VERSION @"7.0.0.0"
 
