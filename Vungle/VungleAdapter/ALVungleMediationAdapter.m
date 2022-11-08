@@ -30,6 +30,7 @@
 @interface ALVungleMediationAdapterRouter : ALMediationAdapterRouter<VungleSDKDelegate, VungleSDKCreativeTracking, VungleSDKHBDelegate>
 @property (nonatomic, copy, nullable) void(^oldCompletionHandler)(void);
 @property (nonatomic, copy, nullable) void(^completionBlock)(MAAdapterInitializationStatus, NSString * _Nullable);
+@property (nonatomic, copy, nullable) void(^adViewAdLoadCompletionBlock)(NSString *);
 @property (nonatomic, assign, getter=hasGrantedReward) BOOL grantedReward;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *creativeIdentifiers;
 
@@ -57,7 +58,7 @@
 @property (nonatomic, strong, readonly) ALVungleMediationAdapterRouter *router;
 @property (nonatomic, copy) NSString *placementIdentifier;
 @property (nonatomic, strong) UIView *adView;
-
+@property (nonatomic, strong) NSMutableDictionary *adViewbidResponseDict;
 // Native Ad Properties
 @property (nonatomic, strong) VungleNativeAd *nativeAd;
 @property (nonatomic, strong) ALVungleMediationAdapterNativeAdDelegate *nativeAdDelegate;
@@ -138,8 +139,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     if ( self.adView )
     {
-        // Note: Not calling this for now because it clears pre-loaded/cached ad view ads as well.
-        // [[VungleSDK sharedSDK] finishedDisplayingAd];
+        if ( self.adViewbidResponseDict && self.adViewbidResponseDict[self.placementIdentifier] )
+        {
+            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier adMarkup: self.adViewbidResponseDict[self.placementIdentifier]];
+        } else
+        {
+            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier];
+        }
         self.adView = nil;
     }
     
@@ -444,6 +450,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     NSString *bidResponse = parameters.bidResponse;
     BOOL isBiddingAd = [bidResponse al_isValidString];
+    if ( isBiddingAd && bidResponse ) {
+        if ( !self.adViewbidResponseDict )
+        {
+            self.adViewbidResponseDict = [[NSMutableDictionary alloc] init];
+        }
+        self.adViewbidResponseDict[self.placementIdentifier] = bidResponse;
+    }
     NSString *adFormatLabel = adFormat.label;
     self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading %@%@ ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), adFormatLabel, self.placementIdentifier];
@@ -484,6 +497,17 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         return;
     }
     
+    [self loadAdViewAdForParameters:parameters adFormat:adFormat adFormatLabel:adFormatLabel andNotify:delegate completion:^(NSString * placementID) {
+        self.router.adViewAdLoadCompletionBlock = nil;
+        [self showAdViewAdForParameters: parameters
+                               adFormat: adFormat
+                              andNotify: delegate];
+    }];
+}
+
+- (void)loadAdViewAdForParameters:(id<MAAdapterResponseParameters>)parameters adFormat:(MAAdFormat *)adFormat adFormatLabel:(NSString *)adFormatLabel andNotify:(id<MAAdViewAdapterDelegate>)delegate completion:(void (^)(NSString *))completion
+{
+    self.router.adViewAdLoadCompletionBlock = completion;
     NSError *error;
     BOOL isLoaded = [self loadAdForParameters: parameters
                                      adFormat: adFormat
@@ -491,15 +515,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( !isLoaded || error )
     {
+        self.router.adViewAdLoadCompletionBlock = nil;
         MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error];
         [self log: @"%@ ad failed to load with error: %@", adFormatLabel, error];
         [delegate didFailToLoadAdViewAdWithError: adapterError];
-    }
-    else
-    {
-        [self showAdViewAdForParameters: parameters
-                               adFormat: adFormat
-                              andNotify: delegate];
     }
 }
 
@@ -864,9 +883,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         deferToNextMainQueueRunloop(^{
             [self didLoadAdForPlacementIdentifier: placementID];
         });
-        
+        if (self.adViewAdLoadCompletionBlock) {
+            self.adViewAdLoadCompletionBlock(placementID);
+        }
         return;
     }
+    self.adViewAdLoadCompletionBlock = nil;
     
     if ( error )
     {
