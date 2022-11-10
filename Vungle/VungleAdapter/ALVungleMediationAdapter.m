@@ -141,7 +141,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( self.adView )
     {
         // Note: Not calling this for now because it clears pre-loaded/cached ad view ads as well.
-        if (self.bidResponse) {
+        if ( self.bidResponse )
+        {
             [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier adMarkup: self.bidResponse];
         }
         else
@@ -453,7 +454,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     NSString *bidResponse = parameters.bidResponse;
     BOOL isBiddingAd = [bidResponse al_isValidString];
-    if ( isBiddingAd && bidResponse ) {
+    if ( isBiddingAd && bidResponse )
+    {
         if ( !self.adViewbidResponseDict )
         {
             self.adViewbidResponseDict = [[NSMutableDictionary alloc] init];
@@ -887,7 +889,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         deferToNextMainQueueRunloop(^{
             [self didLoadAdForPlacementIdentifier: placementID];
         });
-        if (self.adViewAdLoadCompletionBlock) {
+        if ( self.adViewAdLoadCompletionBlock )
+        {
             self.adViewAdLoadCompletionBlock(placementID);
         }
         return;
