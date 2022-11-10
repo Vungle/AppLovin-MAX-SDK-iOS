@@ -57,6 +57,7 @@
 @interface ALVungleMediationAdapter()
 @property (nonatomic, strong, readonly) ALVungleMediationAdapterRouter *router;
 @property (nonatomic, copy) NSString *placementIdentifier;
+@property (nonatomic, copy) NSString *bidResponse;
 @property (nonatomic, strong) UIView *adView;
 @property (nonatomic, strong) NSMutableDictionary *adViewbidResponseDict;
 // Native Ad Properties
@@ -140,7 +141,14 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     if ( self.adView )
     {
         // Note: Not calling this for now because it clears pre-loaded/cached ad view ads as well.
-        // [[VungleSDK sharedSDK] finishedDisplayingAd];
+        if (self.bidResponse) {
+            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier adMarkup: self.bidResponse];
+        }
+        else
+        {
+            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier];
+        }
+        
         self.adView = nil;
     }
     
@@ -454,6 +462,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     NSString *adFormatLabel = adFormat.label;
     self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
+    self.bidResponse = bidResponse;
     [self log: @"Loading %@%@ ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), adFormatLabel, self.placementIdentifier];
     
     if ( ![[VungleSDK sharedSDK] isInitialized] )
