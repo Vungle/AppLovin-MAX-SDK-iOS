@@ -59,7 +59,6 @@
 @property (nonatomic, copy) NSString *placementIdentifier;
 @property (nonatomic, copy) NSString *bidResponse;
 @property (nonatomic, strong) UIView *adView;
-@property (nonatomic, strong) NSMutableDictionary *adViewbidResponseDict;
 // Native Ad Properties
 @property (nonatomic, strong) VungleNativeAd *nativeAd;
 @property (nonatomic, strong) ALVungleMediationAdapterNativeAdDelegate *nativeAdDelegate;
@@ -454,14 +453,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     NSString *bidResponse = parameters.bidResponse;
     BOOL isBiddingAd = [bidResponse al_isValidString];
-    if ( isBiddingAd && bidResponse )
-    {
-        if ( !self.adViewbidResponseDict )
-        {
-            self.adViewbidResponseDict = [[NSMutableDictionary alloc] init];
-        }
-        self.adViewbidResponseDict[self.placementIdentifier] = bidResponse;
-    }
     NSString *adFormatLabel = adFormat.label;
     self.placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     self.bidResponse = bidResponse;
