@@ -15,10 +15,30 @@ int const kALSdkVersionCode =  11020199;
 int const kALSdkVersionNeeded = 6150000;
 int const kALErrorCode =  -4205;
 
+// TODO: Remove when SDK with App Open APIs is released
+@protocol MAAppOpenAdapterDelegateTemp<MAAdapterDelegate>
+- (void)didLoadAppOpenAd;
+- (void)didLoadAppOpenAdWithExtraInfo:(nullable NSDictionary<NSString *, id> *)extraInfo;
+- (void)didFailToLoadAppOpenAdWithError:(MAAdapterError *)adapterError;
+- (void)didDisplayAppOpenAd;
+- (void)didDisplayAppOpenAdWithExtraInfo:(nullable NSDictionary<NSString *, id> *)extraInfo;
+- (void)didClickAppOpenAd;
+- (void)didClickAppOpenAdWithExtraInfo:(nullable NSDictionary<NSString *, id> *)extraInfo;
+- (void)didHideAppOpenAd;
+- (void)didHideAppOpenAdWithExtraInfo:(nullable NSDictionary<NSString *, id> *)extraInfo;
+- (void)didFailToDisplayAppOpenAdWithError:(MAAdapterError *)adapterError;
+@end
+
 @interface ALVungleMediationInterstitialAdapterRouter : NSObject<VungleInterstitialDelegate>
 @property (nonatomic, weak) ALVungleMediationAdapter *parentAdapter;
 @property (nonatomic, strong) id<MAInterstitialAdapterDelegate> interstitialAdDelegate;
 - (nonnull instancetype)initVungleInterstitialAdDelegate:(id<MAInterstitialAdapterDelegate>)interstitialAdDelegate parentAdapter:(ALVungleMediationAdapter *)parentAdapter;
+@end
+
+@interface ALVungleMediationAppOpenAdAdapterRouter : NSObject<VungleInterstitialDelegate>
+@property (nonatomic, weak) ALVungleMediationAdapter *parentAdapter;
+@property (nonatomic, strong) id<MAAppOpenAdapterDelegateTemp> appOpenAdDelegate;
+- (nonnull instancetype)initVungleAppOpenAdDelegate:(id<MAAppOpenAdapterDelegateTemp>)appOpenAdDelegate parentAdapter:(ALVungleMediationAdapter *)parentAdapter;
 @end
 
 @interface ALVungleMediationRewardedAdapterRouter : NSObject<VungleRewardedDelegate>
@@ -56,9 +76,11 @@ int const kALErrorCode =  -4205;
 
 @interface ALVungleMediationAdapter()
 @property (nonatomic, strong) VungleInterstitial *vungleInterstitialAd;
+@property (nonatomic, strong) VungleInterstitial *appOpenAd;
 @property (nonatomic, strong) VungleRewarded *vungleRewardedVideoAd;
 
 @property (nonatomic, strong) ALVungleMediationInterstitialAdapterRouter *interstitialRouter;
+@property (nonatomic, strong) ALVungleMediationAppOpenAdAdapterRouter *appOpenAdRouter;
 @property (nonatomic, strong) ALVungleMediationRewardedAdapterRouter *rewardedRouter;
 @property (nonatomic, strong) ALVungleMediationAdViewAdapterRouter *bannerRouter;
 @property (nonatomic, strong) ALVungleMediationNativeAdAdapter *nativeAdRouter;
@@ -133,6 +155,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.interstitialRouter.interstitialAdDelegate = nil;
     self.vungleInterstitialAd = nil;
     self.interstitialRouter = nil;
+    
+    self.appOpenAdRouter.appOpenAdDelegate = nil;
+    self.appOpenAd = nil;
+    self.appOpenAdRouter = nil;
     
     self.rewardedRouter.rewardedAdDelegate = nil;
     self.vungleRewardedVideoAd = nil;
@@ -268,6 +294,65 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     else
     {
         [delegate didFailToDisplayInterstitialAdWithError: MAAdapterError.invalidLoadState];
+    }
+}
+
+#pragma mark - MAAppOpenAdapter Methods
+
+- (void)loadAppOpenAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAAppOpenAdapterDelegateTemp>)delegate
+{
+    NSString *bidResponse = parameters.bidResponse;
+    BOOL isBiddingAd = [bidResponse al_isValidString];
+    NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
+    [self log: @"Loading %@app open ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
+    
+    if ( ![VungleAds isInitialized] )
+    {
+        [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
+        [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
+        
+        return;
+    }
+    
+    [self updateUserPrivacySettingsForParameters: parameters consentDialogState: self.sdk.configuration.consentDialogState];
+    
+    self.appOpenAdRouter = [[ALVungleMediationAppOpenAdAdapterRouter alloc] initVungleAppOpenAdDelegate: delegate parentAdapter: self];
+    self.appOpenAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
+    self.appOpenAd.delegate = self.appOpenAdRouter;
+    
+    if ( [self.appOpenAd canPlayAd] )
+    {
+        [self log: @"App open ad loaded"];
+        [delegate didLoadAppOpenAd];
+        
+        return;
+    }
+    [self.appOpenAd load: bidResponse];
+}
+
+- (void)showAppOpenAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAAppOpenAdapterDelegateTemp>)delegate
+{
+    NSString *bidResponse = parameters.bidResponse;
+    BOOL isBiddingAd = [bidResponse al_isValidString];
+    NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
+    [self log: @"Showing %@app open ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
+
+    if ( self.appOpenAd && [self.appOpenAd canPlayAd] )
+    {
+        UIViewController *presentingViewController;
+        if ( ALSdk.versionCode >= kALSdkVersionCode )
+        {
+            presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
+        }
+        else
+        {
+            presentingViewController = [ALUtils topViewControllerFromKeyWindow];
+        }
+        [self.appOpenAd presentWith: presentingViewController];
+    }
+    else
+    {
+        [delegate didFailToDisplayAppOpenAdWithError: MAAdapterError.invalidLoadState];
     }
 }
 
@@ -460,7 +545,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];;
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
     [self.parentAdapter log: @"Interstitial ad failed to display with error: %@", adapterError];
     [self.interstitialAdDelegate didFailToDisplayInterstitialAdWithError: adapterError];
 }
@@ -473,6 +558,65 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)interstitialAdDidClick:(VungleInterstitial * _Nonnull)interstitial
 {
     [self.interstitialAdDelegate didClickInterstitialAd];
+}
+
+@end
+
+@implementation ALVungleMediationAppOpenAdAdapterRouter
+
+- (instancetype)initVungleAppOpenAdDelegate:(id<MAAppOpenAdapterDelegateTemp>)appOpenAdDelegate parentAdapter:(ALVungleMediationAdapter *)parentAdapter
+{
+    self = [super init];
+    if ( self )
+    {
+        self.appOpenAdDelegate = appOpenAdDelegate;
+        self.parentAdapter = parentAdapter;
+    }
+    return self;
+}
+
+#pragma mark - VungleInterstitialDelegate
+
+- (void)interstitialAdDidLoad:(VungleInterstitial * _Nonnull)interstitial
+{
+    [self.appOpenAdDelegate didLoadAppOpenAd];
+}
+
+- (void)interstitialAdDidFailToLoad:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
+{
+    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: withError];
+    [self.parentAdapter log: @"App Open ad failed to load with error: %@", adapterError];
+    [self.appOpenAdDelegate didFailToLoadAppOpenAdWithError: adapterError];
+}
+
+- (void)interstitialAdDidPresent:(VungleInterstitial * _Nonnull)interstitial
+{
+    NSString *creativeIdentifier = interstitial.creativeId;
+    if ( ALSdk.versionCode >= kALSdkVersionNeeded && [creativeIdentifier al_isValidString] )
+    {
+        [self.appOpenAdDelegate didDisplayAppOpenAdWithExtraInfo: @{@"creative_id" : creativeIdentifier}];
+    }
+    else
+    {
+        [self.appOpenAdDelegate didDisplayAppOpenAd];
+    }
+}
+
+- (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
+{
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
+    [self.parentAdapter log: @"App Open ad failed to display with error: %@", adapterError];
+    [self.appOpenAdDelegate didFailToDisplayAppOpenAdWithError: adapterError];
+}
+
+- (void)interstitialAdDidClose:(VungleInterstitial * _Nonnull)interstitial
+{
+    [self.appOpenAdDelegate didHideAppOpenAd];
+}
+
+- (void)interstitialAdDidClick:(VungleInterstitial * _Nonnull)interstitial
+{
+    [self.appOpenAdDelegate didClickAppOpenAd];
 }
 
 @end
