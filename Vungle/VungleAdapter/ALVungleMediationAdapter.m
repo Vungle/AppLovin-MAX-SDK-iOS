@@ -545,7 +545,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];;
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
     [self.parentAdapter log: @"Interstitial ad failed to display with error: %@", adapterError];
     [self.interstitialAdDelegate didFailToDisplayInterstitialAdWithError: adapterError];
 }
@@ -604,7 +604,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)interstitialAdDidFailToPresent:(VungleInterstitial * _Nonnull)interstitial withError:(NSError * _Nonnull)withError
 {
-    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];;
+    MAAdapterError *adapterError = [MAAdapterError errorWithCode: kALErrorCode errorString: @"Ad Display Failed" mediatedNetworkErrorCode: withError.code mediatedNetworkErrorMessage: withError.localizedDescription];
     [self.parentAdapter log: @"App Open ad failed to display with error: %@", adapterError];
     [self.appOpenAdDelegate didFailToDisplayAppOpenAdWithError: adapterError];
 }
