@@ -139,7 +139,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     if ( self.adView )
     {
-        // Note: Not calling this for now because it clears pre-loaded/cached ad view ads as well.
         if ( self.bidResponse )
         {
             [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier adMarkup: self.bidResponse];
