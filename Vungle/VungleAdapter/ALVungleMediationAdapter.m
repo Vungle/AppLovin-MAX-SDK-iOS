@@ -192,23 +192,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                                delegate: delegate
                  forPlacementIdentifier: self.placementIdentifier];
     
-    if ( isBiddingAd )
-    {
-        if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse] )
-        {
-            [self log: @"Interstitial ad loaded"];
-            [delegate didLoadInterstitialAd];
-            
-            return;
-        }
-    }
-    else if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier] )
-    {
-        [self log: @"Interstitial ad loaded"];
-        [delegate didLoadInterstitialAd];
-        
-        return;
-    }
+    // Not allowed to skip load ad even if the ad is cached.
+    // That will cause nurl missing issue.
     
     NSError *error;
     BOOL isLoaded = [self loadAdForParameters: parameters
@@ -283,23 +268,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                           delegate: delegate
             forPlacementIdentifier: self.placementIdentifier];
     
-    if ( isBiddingAd )
-    {
-        if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse] )
-        {
-            [self log: @"App open ad loaded"];
-            [delegate didLoadAppOpenAd];
-            
-            return;
-        }
-    }
-    else if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier] )
-    {
-        [self log: @"App open ad loaded"];
-        [delegate didLoadAppOpenAd];
-        
-        return;
-    }
+    // Not allowed to skip load ad even if the ad is cached.
+    // That will cause nurl missing issue.
     
     NSError *error;
     BOOL isLoaded = [self loadAdForParameters: parameters
@@ -374,23 +344,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                            delegate: delegate
              forPlacementIdentifier: self.placementIdentifier];
     
-    if ( isBiddingAd )
-    {
-        if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse] )
-        {
-            [self log: @"Rewarded ad loaded"];
-            [delegate didLoadRewardedAd];
-            
-            return;
-        }
-    }
-    else if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier] )
-    {
-        [self log: @"Rewarded ad loaded"];
-        [delegate didLoadRewardedAd];
-        
-        return;
-    }
+    // Not allowed to skip load ad even if the ad is cached.
+    // That will cause nurl missing issue.
     
     NSError *error;
     BOOL isLoaded = [self loadAdForParameters: parameters
@@ -472,26 +427,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     [[VungleSDK sharedSDK] disableBannerRefresh];
     
-    VungleAdSize adSize = [ALVungleMediationAdapter vungleBannerAdSizeFromFormat: adFormat];
-    if ( isBiddingAd )
-    {
-        if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse]
-            || [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse withSize: adSize] )
-        {
-            [self showAdViewAdForParameters: parameters
-                                   adFormat: adFormat
-                                  andNotify: delegate];
-            return;
-        }
-    }
-    else if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier]
-             || [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier withSize: adSize] )
-    {
-        [self showAdViewAdForParameters: parameters
-                               adFormat: adFormat
-                              andNotify: delegate];
-        return;
-    }
+    // Not allowed to skip load ad even if the ad is cached.
+    // That will cause nurl missing issue.
     
     [self loadAdViewAdForParameters:parameters adFormat:adFormat adFormatLabel:adFormatLabel andNotify:delegate completion:^(NSString * placementID) {
         self.router.adViewAdLoadCompletionBlock = nil;
