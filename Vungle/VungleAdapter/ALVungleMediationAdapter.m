@@ -139,15 +139,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     if ( self.adView )
     {
-        if ( self.bidResponse )
-        {
-            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier adMarkup: self.bidResponse];
-        }
-        else
-        {
-            [[VungleSDK sharedSDK] finishDisplayingAd: self.placementIdentifier];
-        }
-        
         self.adView = nil;
     }
     
@@ -471,27 +462,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                            adView: nil];
     
     [[VungleSDK sharedSDK] disableBannerRefresh];
-    
-    VungleAdSize adSize = [ALVungleMediationAdapter vungleBannerAdSizeFromFormat: adFormat];
-    if ( isBiddingAd )
-    {
-        if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse]
-            || [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier adMarkup: bidResponse withSize: adSize] )
-        {
-            [self showAdViewAdForParameters: parameters
-                                   adFormat: adFormat
-                                  andNotify: delegate];
-            return;
-        }
-    }
-    else if ( [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier]
-             || [[VungleSDK sharedSDK] isAdCachedForPlacementID: self.placementIdentifier withSize: adSize] )
-    {
-        [self showAdViewAdForParameters: parameters
-                               adFormat: adFormat
-                              andNotify: delegate];
-        return;
-    }
     
     [self loadAdViewAdForParameters:parameters adFormat:adFormat adFormatLabel:adFormatLabel andNotify:delegate completion:^(NSString * placementID) {
         self.router.adViewAdLoadCompletionBlock = nil;
