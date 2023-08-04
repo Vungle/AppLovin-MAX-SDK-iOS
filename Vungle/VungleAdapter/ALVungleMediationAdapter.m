@@ -575,13 +575,18 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 500: // BannerView: Invalid Size
             adapterError = MAAdapterError.invalidConfiguration;
             break;
+        case 119: // Json Encode Error
+            adapterError = MAAdapterError.internalError;
+            break;
         case 202: // Ad already Consumed
         case 203: // Ad is already loading
         case 204: // Ad already loaded
         case 205: // Ad is playing
         case 206: // Ad already failed loading
-        case 210: // Ad Not Loaded
             adapterError = MAAdapterError.invalidLoadState;
+            break;
+        case 210: // Ad Not Loaded
+            adapterError = isPlayFlow ? MAAdapterError.adNotReady : MAAdapterError.invalidLoadState;
             break;
         case 115: // Invalid IndexURL
         case 302: // Invalid Ifa Status
@@ -589,11 +594,11 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 400: // Concurrent Playback Unsupported
             adapterError = MAAdapterError.adDisplayFailedError;
             break;
-        case 119: // Json Encode Error
-            adapterError = MAAdapterError.internalError;
-            break;
         case 212: // Placement Sleep
             adapterError = MAAdapterError.noFill;
+            break;
+        case 217: // Ad response timeOut
+            adapterError = MAAdapterError.timeout;
             break;
         case 220: // Server busy with retry after timer.
         case 221: // Load ad during Server busy with retry after timer.
@@ -602,19 +607,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 307: // Ad Expired on play call.
             adapterError = MAAdapterError.adExpiredError;
             break;
-        case 217: // Ad response timeOut
-            adapterError = MAAdapterError.timeout;
-            break;
         case 600: // Native Asset Error
             adapterError = MAAdapterError.missingRequiredNativeAdAssets;
             break;
         case 2000: // webView WebContent Process Did Terminate
         case 2001: // webView Failed Navigation
             adapterError = MAAdapterError.webViewError;
-    }
-    
-    if (isPlayFlow && vungleErrorCode == 210) {
-        adapterError = MAAdapterError.adNotReady;
     }
     
     return [MAAdapterError errorWithCode:adapterError.code
