@@ -603,6 +603,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 220: // Server busy with retry after timer.
         case 221: // Load ad during Server busy with retry after timer.
             adapterError = MAAdapterError.serverError;
+            break;
         case 304: // Ad Expired
         case 307: // Ad Expired on play call.
             adapterError = MAAdapterError.adExpiredError;
@@ -613,6 +614,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         case 2000: // webView WebContent Process Did Terminate
         case 2001: // webView Failed Navigation
             adapterError = MAAdapterError.webViewError;
+            break;
     }
     
     return [MAAdapterError errorWithCode:adapterError.code
