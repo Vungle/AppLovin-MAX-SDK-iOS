@@ -910,7 +910,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *creativeIdentifier = banner.creativeId;
     if ( [creativeIdentifier al_isValidString] )
     {
-        [self.delegate didLoadAdForAdView: self.parentAdapter.adViewContainer withExtraInfo:@{@"creative_id" : creativeIdentifier}];
+        [self.delegate didLoadAdForAdView: self.parentAdapter.adViewContainer withExtraInfo: @{@"creative_id" : creativeIdentifier}];
     }
     else
     {
@@ -1075,7 +1075,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         NSString *creativeIdentifier = nativeAd.creativeId;
         if ( [creativeIdentifier al_isValidString] )
         {
-            [self.delegate didLoadAdForAdView: maxNativeAdView withExtraInfo:@{@"creative_id" : creativeIdentifier}];
+            [self.delegate didLoadAdForAdView: maxNativeAdView withExtraInfo: @{@"creative_id" : creativeIdentifier}];
         }
         else
         {
@@ -1176,7 +1176,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         NSString *creativeIdentifier = nativeAd.creativeId;
         if ( [creativeIdentifier al_isValidString] )
         {
-            [self.delegate didLoadAdForNativeAd: maxNativeAd withExtraInfo:@{@"creative_id" : creativeIdentifier}];
+            [self.delegate didLoadAdForNativeAd: maxNativeAd withExtraInfo: @{@"creative_id" : creativeIdentifier}];
         }
         else
         {
