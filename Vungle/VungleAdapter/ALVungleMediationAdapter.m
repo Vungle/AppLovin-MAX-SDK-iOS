@@ -9,7 +9,7 @@
 #import "ALVungleMediationAdapter.h"
 #import <VungleAdsSDK/VungleAdsSDK.h>
 
-#define ADAPTER_VERSION @"7.2.2.0"
+#define ADAPTER_VERSION @"7.3.0.0"
 
 @interface ALVungleMediationAdapterInterstitialAdDelegate : NSObject <VungleInterstitialDelegate>
 @property (nonatomic,   weak) ALVungleMediationAdapter *parentAdapter;
@@ -209,7 +209,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
         [delegate didFailToLoadInterstitialAdWithError: MAAdapterError.notInitialized];
-        
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
         return;
     }
     
@@ -267,7 +267,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self log: @"Vungle SDK not successfully initialized: failing app open ad load..."];
         [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
-        
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
         return;
     }
     
@@ -321,7 +321,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load..."];
         [delegate didFailToLoadRewardedAdWithError: MAAdapterError.notInitialized];
-        
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
         return;
     }
     
@@ -386,7 +386,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self log: @"Vungle SDK not successfully initialized: failing %@ ad load...", adFormatLabel];
         [delegate didFailToLoadAdViewAdWithError: MAAdapterError.notInitialized];
-        
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
         return;
     }
     
@@ -431,7 +431,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self log: @"Vungle SDK not successfully initialized: failing native ad load..."];
         [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
-        
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
         return;
     }
     
