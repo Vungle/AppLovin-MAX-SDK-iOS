@@ -117,7 +117,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         ALVungleIntializationStatus = MAAdapterInitializationStatusInitializing;
         
-        NSString *appID = [parameters.serverParameters al_stringForKey: @"app_id"];
+        NSString *appID = [parameters.serverParameters al_stringForKey: @"app_id"] ? :@"";
         [self log: @"Initializing Vungle SDK with app id: %@...", appID];
         
         [VungleAds setIntegrationName: @"max" version: ADAPTER_VERSION];
@@ -207,19 +207,27 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( ![VungleAds isInitialized] )
     {
-        [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
-        [delegate didFailToLoadInterstitialAdWithError: MAAdapterError.notInitialized];
-        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
-        return;
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
+            if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) {
+                [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
+                [delegate didFailToLoadInterstitialAdWithError: MAAdapterError.notInitialized];
+            } else if ( initializationStatus == MAAdapterInitializationStatusInitializedSuccess ) {
+                self.interstitialAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
+                self.interstitialAdDelegate = [[ALVungleMediationAdapterInterstitialAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+                self.interstitialAd.delegate = self.interstitialAdDelegate;
+                
+                [self.interstitialAd load: bidResponse];
+            }
+        }];
+    } else {
+        [self updateUserPrivacySettingsForParameters: parameters];
+        
+        self.interstitialAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
+        self.interstitialAdDelegate = [[ALVungleMediationAdapterInterstitialAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+        self.interstitialAd.delegate = self.interstitialAdDelegate;
+        
+        [self.interstitialAd load: bidResponse];
     }
-    
-    [self updateUserPrivacySettingsForParameters: parameters];
-    
-    self.interstitialAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
-    self.interstitialAdDelegate = [[ALVungleMediationAdapterInterstitialAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
-    self.interstitialAd.delegate = self.interstitialAdDelegate;
-    
-    [self.interstitialAd load: bidResponse];
 }
 
 - (void)showInterstitialAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAInterstitialAdapterDelegate>)delegate
@@ -265,19 +273,27 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( ![VungleAds isInitialized] )
     {
-        [self log: @"Vungle SDK not successfully initialized: failing app open ad load..."];
-        [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
-        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
-        return;
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
+            if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) {
+                [self log: @"Vungle SDK not successfully initialized: failing app open ad load..."];
+                [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
+            } else if ( initializationStatus == MAAdapterInitializationStatusInitializedSuccess ) {
+                self.appOpenAdDelegate = [[ALVungleMediationAdapterAppOpenAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+                self.appOpenAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
+                self.appOpenAd.delegate = self.appOpenAdDelegate;
+                
+                [self.appOpenAd load: bidResponse];
+            }
+        }];
+    } else {
+        [self updateUserPrivacySettingsForParameters: parameters];
+        
+        self.appOpenAdDelegate = [[ALVungleMediationAdapterAppOpenAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+        self.appOpenAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
+        self.appOpenAd.delegate = self.appOpenAdDelegate;
+        
+        [self.appOpenAd load: bidResponse];
     }
-    
-    [self updateUserPrivacySettingsForParameters: parameters];
-    
-    self.appOpenAdDelegate = [[ALVungleMediationAdapterAppOpenAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
-    self.appOpenAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
-    self.appOpenAd.delegate = self.appOpenAdDelegate;
-    
-    [self.appOpenAd load: bidResponse];
 }
 
 - (void)showAppOpenAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAAppOpenAdapterDelegate>)delegate
@@ -319,19 +335,27 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( ![VungleAds isInitialized] )
     {
-        [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load..."];
-        [delegate didFailToLoadRewardedAdWithError: MAAdapterError.notInitialized];
-        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
-        return;
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
+            if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) {
+                [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load..."];
+                [delegate didFailToLoadRewardedAdWithError: MAAdapterError.notInitialized];
+            } else if ( initializationStatus == MAAdapterInitializationStatusInitializedSuccess ) {
+                self.rewardedAd = [[VungleRewarded alloc] initWithPlacementId: placementIdentifier];
+                self.rewardedAdDelegate = [[ALVungleMediationAdapterRewardedAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+                self.rewardedAd.delegate = self.rewardedAdDelegate;
+                
+                [self.rewardedAd load: bidResponse];
+            }
+        }];
+    } else {
+        [self updateUserPrivacySettingsForParameters: parameters];
+        
+        self.rewardedAd = [[VungleRewarded alloc] initWithPlacementId: placementIdentifier];
+        self.rewardedAdDelegate = [[ALVungleMediationAdapterRewardedAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
+        self.rewardedAd.delegate = self.rewardedAdDelegate;
+        
+        [self.rewardedAd load: bidResponse];
     }
-    
-    [self updateUserPrivacySettingsForParameters: parameters];
-    
-    self.rewardedAd = [[VungleRewarded alloc] initWithPlacementId: placementIdentifier];
-    self.rewardedAdDelegate = [[ALVungleMediationAdapterRewardedAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
-    self.rewardedAd.delegate = self.rewardedAdDelegate;
-    
-    [self.rewardedAd load: bidResponse];
 }
 
 - (void)showRewardedAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MARewardedAdapterDelegate>)delegate
@@ -384,36 +408,62 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( ![VungleAds isInitialized] )
     {
-        [self log: @"Vungle SDK not successfully initialized: failing %@ ad load...", adFormatLabel];
-        [delegate didFailToLoadAdViewAdWithError: MAAdapterError.notInitialized];
-        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
-        return;
-    }
-    
-    [self updateUserPrivacySettingsForParameters: parameters];
-    
-    if ( isNative )
-    {
-        self.nativeAdViewDelegate = [[ALVungleMediationAdapterNativeAdViewDelegate alloc] initWithParentAdapter: self
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
+            if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) {
+                [self log: @"Vungle SDK not successfully initialized: failing %@ ad load...", adFormatLabel];
+                [delegate didFailToLoadAdViewAdWithError: MAAdapterError.notInitialized];
+            } else if ( initializationStatus == MAAdapterInitializationStatusInitializedSuccess ) {
+                if ( isNative )
+                {
+                    self.nativeAdViewDelegate = [[ALVungleMediationAdapterNativeAdViewDelegate alloc] initWithParentAdapter: self
+                                                                                                                     format: adFormat
+                                                                                                                 parameters: parameters
+                                                                                                                  andNotify: delegate];
+                    [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdViewDelegate];
+                }
+                else
+                {
+                    BannerSize adSize = [self adSizeFromAdFormat: adFormat];
+                    
+                    self.adView = [[VungleBanner alloc] initWithPlacementId: placementIdentifier size: adSize];
+                    self.adViewDelegate = [[ALVungleMediationAdapterAdViewDelegate alloc] initWithParentAdapter: self
                                                                                                          format: adFormat
                                                                                                      parameters: parameters
                                                                                                       andNotify: delegate];
-        [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdViewDelegate];
-    }
-    else
-    {
-        BannerSize adSize = [self adSizeFromAdFormat: adFormat];
+                    self.adView.delegate = self.adViewDelegate;
+                            
+                    self.adViewContainer = [[UIView alloc] initWithFrame: (CGRect) { CGPointZero, adFormat.size }];
+                    
+                    [self.adView load: bidResponse];
+                }
+            }
+        }];
+    } else {
+        [self updateUserPrivacySettingsForParameters: parameters];
         
-        self.adView = [[VungleBanner alloc] initWithPlacementId: placementIdentifier size: adSize];
-        self.adViewDelegate = [[ALVungleMediationAdapterAdViewDelegate alloc] initWithParentAdapter: self
-                                                                                             format: adFormat
-                                                                                         parameters: parameters
-                                                                                          andNotify: delegate];
-        self.adView.delegate = self.adViewDelegate;
-                
-        self.adViewContainer = [[UIView alloc] initWithFrame: (CGRect) { CGPointZero, adFormat.size }];
-        
-        [self.adView load: bidResponse];
+        if ( isNative )
+        {
+            self.nativeAdViewDelegate = [[ALVungleMediationAdapterNativeAdViewDelegate alloc] initWithParentAdapter: self
+                                                                                                             format: adFormat
+                                                                                                         parameters: parameters
+                                                                                                          andNotify: delegate];
+            [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdViewDelegate];
+        }
+        else
+        {
+            BannerSize adSize = [self adSizeFromAdFormat: adFormat];
+            
+            self.adView = [[VungleBanner alloc] initWithPlacementId: placementIdentifier size: adSize];
+            self.adViewDelegate = [[ALVungleMediationAdapterAdViewDelegate alloc] initWithParentAdapter: self
+                                                                                                 format: adFormat
+                                                                                             parameters: parameters
+                                                                                              andNotify: delegate];
+            self.adView.delegate = self.adViewDelegate;
+                    
+            self.adViewContainer = [[UIView alloc] initWithFrame: (CGRect) { CGPointZero, adFormat.size }];
+            
+            [self.adView load: bidResponse];
+        }
     }
 }
 
@@ -429,18 +479,25 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( ![VungleAds isInitialized] )
     {
-        [self log: @"Vungle SDK not successfully initialized: failing native ad load..."];
-        [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
-        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {}];
-        return;
+        [self initializeWithParameters:(id<MAAdapterInitializationParameters>)parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
+            if (initializationStatus == MAAdapterInitializationStatusInitializedFailure) {
+                [self log: @"Vungle SDK not successfully initialized: failing native ad load..."];
+                [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
+            } else if (initializationStatus == MAAdapterInitializationStatusInitializedSuccess) {
+                self.nativeAdDelegate = [[ALVungleMediationAdapterNativeAdDelegate alloc] initWithParentAdapter: self
+                                                                                                     parameters: parameters
+                                                                                                      andNotify: delegate];
+                [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdDelegate];
+            }
+        }];
+    } else {
+        [self updateUserPrivacySettingsForParameters: parameters];
+        
+        self.nativeAdDelegate = [[ALVungleMediationAdapterNativeAdDelegate alloc] initWithParentAdapter: self
+                                                                                             parameters: parameters
+                                                                                              andNotify: delegate];
+        [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdDelegate];
     }
-    
-    [self updateUserPrivacySettingsForParameters: parameters];
-    
-    self.nativeAdDelegate = [[ALVungleMediationAdapterNativeAdDelegate alloc] initWithParentAdapter: self
-                                                                                         parameters: parameters
-                                                                                          andNotify: delegate];
-    [self loadVungleNativeAdForParameters: parameters andNotify: self.nativeAdDelegate];
 }
 
 #pragma mark - Shared Methods
