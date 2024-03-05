@@ -174,7 +174,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
                 }
             }
         }];
-    } 
+    }
     else
     {
         completionHandler(ALVungleIntializationStatus, nil);
