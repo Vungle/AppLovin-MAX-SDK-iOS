@@ -129,6 +129,9 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     {
         @synchronized(completionHandlers)
         {
+            if (completionHandlers == nil) {
+                completionHandlers = [NSMutableSet set];
+            }
             [completionHandlers addObject: completionHandler];
         }
         
