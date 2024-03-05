@@ -246,7 +246,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     [self initVungleSDK:parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
         if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) 
         {
-            [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
+            [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load with error %@", errorMessage];
             [delegate didFailToLoadInterstitialAdWithError: MAAdapterError.notInitialized];
         } 
         else
@@ -306,7 +306,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     [self initVungleSDK:parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
         if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) 
         {
-            [self log: @"Vungle SDK not successfully initialized: failing app open ad load..."];
+            [self log: @"Vungle SDK not successfully initialized: failing app open ad load with error %@", errorMessage];
             [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
         } 
         else
@@ -362,7 +362,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     [self initVungleSDK:parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
         if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) 
         {
-            [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load..."];
+            [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load with error %@", errorMessage];
             [delegate didFailToLoadRewardedAdWithError: MAAdapterError.notInitialized];
         } 
         else
@@ -429,7 +429,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     [self initVungleSDK:parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
         if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) 
         {
-            [self log: @"Vungle SDK not successfully initialized: failing %@ ad load...", adFormatLabel];
+            [self log: @"Vungle SDK not successfully initialized: failing %@ ad load with error %@", adFormatLabel, errorMessage];
             [delegate didFailToLoadAdViewAdWithError: MAAdapterError.notInitialized];
         } 
         else
@@ -476,7 +476,7 @@ static NSMutableSet<void (^)(MAAdapterInitializationStatus, NSString *_Nullable)
     [self initVungleSDK:parameters completionHandler:^(MAAdapterInitializationStatus initializationStatus, NSString * _Nullable errorMessage) {
         if ( initializationStatus == MAAdapterInitializationStatusInitializedFailure ) 
         {
-            [self log: @"Vungle SDK not successfully initialized: failing native ad load..."];
+            [self log: @"Vungle SDK not successfully initialized: failing native ad load with error %@", errorMessage];
             [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
         } 
         else
