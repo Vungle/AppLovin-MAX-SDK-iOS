@@ -134,7 +134,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
             else
             {
                 [self log: @"Vungle SDK initialized"];
-                [ALVungleInitialized compareAndSet: NO update: YES]
+                [ALVungleInitialized compareAndSet: NO update: YES];
                 ALVungleIntializationStatus = MAAdapterInitializationStatusInitializedSuccess;
                 completionHandler(ALVungleIntializationStatus, nil);
             }
