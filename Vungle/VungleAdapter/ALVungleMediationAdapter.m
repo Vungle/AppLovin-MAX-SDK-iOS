@@ -523,7 +523,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     BOOL isAdaptiveBanner = parameters.localExtraParameters[@"adaptive_banner"];
     if ( isAdaptiveBanner )
     {
-        return [VungleAdSize VungleCurrentOrientationAdSizeWithWidth:[self adaptiveBannerWidthFromParameters: parameters]];
+        return [VungleAdSize VungleAdSizeWithWidth:[self adaptiveBannerWidthFromParameters: parameters]];
     }
     else
     {
