@@ -928,7 +928,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         extraInfo[@"creative_id"] = creativeIdentifier;
     }
 
-    // TODO: We are confirming with MAX if we need to pass ad's w and h through this callbacl or not.
+    // TODO: We are confirming with MAX if we need to pass bannerView's w and h through this callback or not.
     CGSize adSize = bannerView.vungleAdSize.size;
     if ( !CGSizeEqualToSize(CGSizeZero, adSize) )
     {
