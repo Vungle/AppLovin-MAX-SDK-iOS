@@ -30,7 +30,7 @@
 - (instancetype)initWithParentAdapter:(ALVungleMediationAdapter *)parentAdapter andNotify:(id<MARewardedAdapterDelegate>)delegate;
 @end
 
-@interface ALVungleMediationAdapterAdViewDelegate : NSObject <VungleBannerViewDelegate, VungleAdSizeDelegate>
+@interface ALVungleMediationAdapterAdViewDelegate : NSObject <VungleBannerViewDelegate>
 @property (nonatomic,   weak) ALVungleMediationAdapter *parentAdapter;
 @property (nonatomic, strong) MAAdFormat *adFormat;
 @property (nonatomic, strong) id<MAAdapterResponseParameters> parameters;
@@ -410,7 +410,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                                                                                          parameters: parameters
                                                                                           andNotify: delegate];
         self.adView.delegate = self.adViewDelegate;
-        self.adView.adSizeDelegate = self.adViewDelegate;
 
         [self.adView load: bidResponse];
     }
@@ -520,14 +519,20 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (VungleAdSize *)adSizeFromAdFormat:(MAAdFormat *)adFormat
                           parameters:(id<MAAdapterParameters>)parameters
 {
-    BOOL isAdaptiveBanner = parameters.localExtraParameters[@"adaptive_banner"];
+    BOOL isAdaptiveBanner = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
+    NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
+    NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"];
+    
     if ( isAdaptiveBanner )
     {
         return [VungleAdSize VungleAdSizeWithWidth:[self adaptiveBannerWidthFromParameters: parameters]];
     }
     else
     {
-        if ( adFormat == MAAdFormat.banner )
+        if (customWidth && customWidth) {
+            return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
+        }
+        else if ( adFormat == MAAdFormat.banner )
         {
             return [VungleAdSize VungleAdSizeBannerRegular];
         }
@@ -929,7 +934,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
 
     // TODO: We are confirming with MAX if we need to pass bannerView's w and h through this callback or not.
-    CGSize adSize = bannerView.vungleAdSize.size;
+    CGSize adSize = [bannerView getBannerSize];
     if ( !CGSizeEqualToSize(CGSizeZero, adSize) )
     {
         extraInfo[@"ad_width"] = @(adSize.width);
@@ -984,11 +989,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     [self.parentAdapter log: @"AdView ad hidden %@", bannerView.placementId];
     [self.delegate didHideAdViewAd];
-}
-
-- (void)adViewWillChangeToSize:(VungleBannerView * _Nonnull)bannerView :(VungleAdSize * _Nonnull)size
-{
-    [self.parentAdapter log: @"AdView will change size: %@", bannerView.placementId];
 }
 
 @end
