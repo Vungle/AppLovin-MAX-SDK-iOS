@@ -402,8 +402,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     else
     {
-        VungleAdSize *adSize = [self adSizeFromAdFormat: adFormat
-                                             parameters:parameters];
+        VungleAdSize *adSize = [self adSizeFromAdFormat: adFormat parameters:parameters];
         self.adView = [[VungleBannerView alloc] initWithPlacementId: placementIdentifier vungleAdSize: adSize];
         self.adViewDelegate = [[ALVungleMediationAdapterAdViewDelegate alloc] initWithParentAdapter: self
                                                                                              format: adFormat
@@ -525,7 +524,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     if ( isAdaptiveBanner )
     {
-        return [VungleAdSize VungleAdSizeWithWidth:[self adaptiveBannerWidthFromParameters: parameters]];
+        return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, 0))];
     }
     else
     {
@@ -926,24 +925,29 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     [self.parentAdapter log: @"AdView loaded: %@", bannerView.placementId];
 
     NSMutableDictionary *extraInfo = [NSMutableDictionary dictionaryWithCapacity: 3];
-
+    BOOL isExtraInfo = NO;
     NSString *creativeIdentifier = bannerView.creativeId;
     if ( [creativeIdentifier al_isValidString] )
     {
         extraInfo[@"creative_id"] = creativeIdentifier;
+        isExtraInfo = YES;
     }
 
-    // TODO: We are confirming with MAX if we need to pass bannerView's w and h through this callback or not.
     CGSize adSize = [bannerView getBannerSize];
     if ( !CGSizeEqualToSize(CGSizeZero, adSize) )
     {
         extraInfo[@"ad_width"] = @(adSize.width);
         extraInfo[@"ad_height"] = @(adSize.height);
+        isExtraInfo = YES;
     }
     
-    [self.delegate performSelector: @selector(didLoadAdForAdView:withExtraInfo:)
-                        withObject: bannerView
-                        withObject: extraInfo];
+    if (isExtraInfo) {
+        [self.delegate performSelector: @selector(didLoadAdForAdView:withExtraInfo:)
+                            withObject: bannerView
+                            withObject: extraInfo];
+    } else {
+        [self.delegate didLoadAdForAdView: bannerView];
+    }
 }
 
 - (void)bannerAdDidFail:(VungleBannerView *)bannerView withError:(NSError *)error
