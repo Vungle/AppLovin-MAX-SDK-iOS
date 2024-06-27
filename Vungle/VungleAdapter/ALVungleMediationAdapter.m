@@ -192,8 +192,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     NSString *signal = [VungleAds getBiddingToken];
     [delegate didCollectSignal: signal];
-    
-    // TODO: We might need to send adaptive banner's width and height as extra param here.
 }
 
 #pragma mark - MAInterstitialAdapter Methods
@@ -519,12 +517,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                           parameters:(id<MAAdapterParameters>)parameters
 {
     BOOL isAdaptiveBanner = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
-    NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
-    NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"];
+    NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"] ? : 0;
+    NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"] ? : 0;
     
     if ( isAdaptiveBanner )
     {
-        return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, 0))];
+        return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
     }
     else
     {
