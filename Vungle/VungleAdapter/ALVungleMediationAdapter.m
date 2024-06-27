@@ -519,33 +519,26 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     BOOL isAdaptiveBanner = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
     NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"] ? : 0;
     NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"] ? : 0;
-    
-    if ( isAdaptiveBanner )
-    {
+
+    if (customWidth && customWidth) {
         return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
+    }
+    else if ( adFormat == MAAdFormat.banner )
+    {
+        return [VungleAdSize VungleAdSizeBannerRegular];
+    }
+    else if ( adFormat == MAAdFormat.leader )
+    {
+        return [VungleAdSize VungleAdSizeLeaderboard];
+    }
+    else if ( adFormat == MAAdFormat.mrec )
+    {
+        return [VungleAdSize VungleAdSizeMREC];
     }
     else
     {
-        if (customWidth && customWidth) {
-            return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
-        }
-        else if ( adFormat == MAAdFormat.banner )
-        {
-            return [VungleAdSize VungleAdSizeBannerRegular];
-        }
-        else if ( adFormat == MAAdFormat.leader )
-        {
-            return [VungleAdSize VungleAdSizeLeaderboard];
-        }
-        else if ( adFormat == MAAdFormat.mrec )
-        {
-            return [VungleAdSize VungleAdSizeMREC];
-        }
-        else
-        {
-            [NSException raise: NSInvalidArgumentException format: @"Unsupported ad format: %@", adFormat];
-            return [VungleAdSize VungleAdSizeBannerRegular];
-        }
+        [NSException raise: NSInvalidArgumentException format: @"Unsupported ad format: %@", adFormat];
+        return [VungleAdSize VungleAdSizeBannerRegular];
     }
 }
 
