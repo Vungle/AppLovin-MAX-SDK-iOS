@@ -520,7 +520,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"] ? : 0;
     NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"] ? : 0;
 
-    if (customWidth && customWidth) {
+    if (!isAdaptiveBanner && customWidth && customWidth) {
         return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
     }
     else if ( adFormat == MAAdFormat.banner )
@@ -540,21 +540,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         [NSException raise: NSInvalidArgumentException format: @"Unsupported ad format: %@", adFormat];
         return [VungleAdSize VungleAdSizeBannerRegular];
     }
-}
-
-- (CGFloat)adaptiveBannerWidthFromParameters:(id<MAAdapterParameters>)parameters
-{
-    NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
-    if ( customWidth != nil )
-    {
-        return customWidth.floatValue;
-    }
-
-    UIViewController *viewController = [ALUtils topViewControllerFromKeyWindow];
-    UIWindow *window = viewController.view.window;
-    CGRect frame = UIEdgeInsetsInsetRect(window.frame, window.safeAreaInsets);
-
-    return CGRectGetWidth(frame);
 }
 
 + (MAAdapterError *)toMaxError:(nullable NSError *)vungleError isAdPresentError:(BOOL)adPresentError
