@@ -518,10 +518,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                           parameters:(id<MAAdapterParameters>)parameters
 {
     BOOL isAdaptiveBanner = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
-    NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"] ? : 0;
-    NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"] ? : 0;
 
-    if (!isAdaptiveBanner && customWidth && customWidth) {
+    if (!isAdaptiveBanner) {
+        NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"] ? : 0;
+        NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"] ? : 0;
         return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
     }
     else if ( adFormat == MAAdFormat.banner )
@@ -903,35 +903,38 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     [self.parentAdapter log: @"AdView loaded: %@", bannerView.placementId];
 
     self.isAdloadSuccess = YES;
-    NSMutableDictionary *extraInfo = [NSMutableDictionary dictionaryWithCapacity: 3];
-    BOOL isExtraInfo = NO;
-    NSString *creativeIdentifier = bannerView.creativeId;
-    if ( [creativeIdentifier al_isValidString] )
-    {
-        extraInfo[@"creative_id"] = creativeIdentifier;
-        isExtraInfo = YES;
-    }
 
-    CGSize adSize = [bannerView getBannerSize];
-    if ( !CGSizeEqualToSize(CGSizeZero, adSize) )
+    if ( ALSdk.versionCode >= 6150000 )
     {
-        extraInfo[@"ad_width"] = @(adSize.width);
-        extraInfo[@"ad_height"] = @(adSize.height);
-        isExtraInfo = YES;
-    }
-    
-    if (isExtraInfo) {
+        NSMutableDictionary *extraInfo = [NSMutableDictionary dictionaryWithCapacity: 3];
+
+        NSString *creativeIdentifier = bannerView.creativeId;
+        if ( [creativeIdentifier al_isValidString] )
+        {
+            extraInfo[@"creative_id"] = creativeIdentifier;
+
+        }
+
+        CGSize adSize = [bannerView getBannerSize];
+        if ( !CGSizeEqualToSize(CGSizeZero, adSize) )
+        {
+            extraInfo[@"ad_width"] = @(adSize.width);
+            extraInfo[@"ad_height"] = @(adSize.height);
+
+        }
+
         [self.delegate performSelector: @selector(didLoadAdForAdView:withExtraInfo:)
                             withObject: bannerView
                             withObject: extraInfo];
-    } else {
+    }
+    else {
         [self.delegate didLoadAdForAdView: bannerView];
     }
 }
 
 - (void)bannerAdDidFail:(VungleBannerView *)bannerView withError:(NSError *)error
 {
-    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: NO];
+    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: self.isAdloadSuccess];
     if ( self.isAdloadSuccess )
     {
         [self.parentAdapter log: @"AdView failed to display with error: %@", adapterError];
