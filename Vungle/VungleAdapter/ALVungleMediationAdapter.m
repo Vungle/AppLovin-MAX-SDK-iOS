@@ -35,6 +35,7 @@
 @property (nonatomic, strong) MAAdFormat *adFormat;
 @property (nonatomic, strong) id<MAAdapterResponseParameters> parameters;
 @property (nonatomic, strong) id<MAAdViewAdapterDelegate> delegate;
+@property (nonatomic, assign) BOOL isAdloadSuccess;
 - (instancetype)initWithParentAdapter:(ALVungleMediationAdapter *)parentAdapter
                                format:(MAAdFormat *)adFormat
                            parameters:(id<MAAdapterResponseParameters>)parameters
@@ -892,6 +893,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         self.adFormat = adFormat;
         self.parameters = parameters;
         self.delegate = delegate;
+        self.isAdloadSuccess = NO;
     }
     return self;
 }
@@ -900,6 +902,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     [self.parentAdapter log: @"AdView loaded: %@", bannerView.placementId];
 
+    self.isAdloadSuccess = YES;
     NSMutableDictionary *extraInfo = [NSMutableDictionary dictionaryWithCapacity: 3];
     BOOL isExtraInfo = NO;
     NSString *creativeIdentifier = bannerView.creativeId;
@@ -929,8 +932,16 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 - (void)bannerAdDidFail:(VungleBannerView *)bannerView withError:(NSError *)error
 {
     MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: NO];
-    [self.parentAdapter log: @"AdView failed to load with error: %@", adapterError];
-    [self.delegate didFailToLoadAdViewAdWithError: adapterError];
+    if ( self.isAdloadSuccess )
+    {
+        [self.parentAdapter log: @"AdView failed to display with error: %@", adapterError];
+        [self.delegate didFailToDisplayAdViewAdWithError: adapterError];
+    }
+    else
+    {
+        [self.parentAdapter log: @"AdView failed to load with error: %@", adapterError];
+        [self.delegate didFailToLoadAdViewAdWithError: adapterError];
+    }
 }
 
 - (void)bannerAdWillPresent:(VungleBannerView *)bannerView
