@@ -521,7 +521,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSNumber *customWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
     NSNumber *customHight = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_height"];
 
-    if (!isAdaptiveBanner && customWidth && customHight) {
+    if (isAdaptiveBanner && customWidth && customHight) {
         return [VungleAdSize VungleAdSizeFromCGSize:(CGSizeMake(customWidth.floatValue, customHight.floatValue))];
     }
     else if ( adFormat == MAAdFormat.banner )
