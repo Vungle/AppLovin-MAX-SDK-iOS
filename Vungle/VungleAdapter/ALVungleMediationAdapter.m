@@ -1091,13 +1091,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     [self.delegate didFailToLoadAdViewAdWithError: adapterError];
 }
 
-- (void)nativeAdDidFailToPresent:(VungleNative *)native withError:(NSError *)error
-{
-    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: NO];
-    [self.parentAdapter log: @"Native %@ ad failed to present with error: %@", self.adFormat, adapterError];
-    [self.delegate didFailToLoadAdViewAdWithError: adapterError];
-}
-
 - (void)nativeAdDidTrackImpression:(VungleNative *)nativeAd
 {
     [self.parentAdapter log: @"Native %@ ad shown: %@", self.adFormat, self.placementIdentifier];
@@ -1180,13 +1173,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 {
     MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: NO];
     [self.parentAdapter log: @"Native ad failed to load with error: %@", adapterError];
-    [self.delegate didFailToLoadNativeAdWithError: adapterError];
-}
-
-- (void)nativeAdDidFailToPresent:(VungleNative *)native withError:(NSError *)error
-{
-    MAAdapterError *adapterError = [ALVungleMediationAdapter toMaxError: error isAdPresentError: NO];
-    [self.parentAdapter log: @"Native ad failed to present with error: %@", adapterError];
     [self.delegate didFailToLoadNativeAdWithError: adapterError];
 }
 
