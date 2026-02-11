@@ -219,6 +219,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.interstitialAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
     self.interstitialAdDelegate = [[ALVungleMediationAdapterInterstitialAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
     self.interstitialAd.delegate = self.interstitialAdDelegate;
+    self.interstitialAd.adapterAdFormat = @"MAInterstitialAdapter";
     
     [self.interstitialAd load: bidResponse];
 }
@@ -263,6 +264,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.appOpenAdDelegate = [[ALVungleMediationAdapterAppOpenAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
     self.appOpenAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
     self.appOpenAd.delegate = self.appOpenAdDelegate;
+    self.appOpenAd.adapterAdFormat = @"MAAppOpenAdapter";
     
     [self.appOpenAd load: bidResponse];
 }
@@ -307,6 +309,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.rewardedAd = [[VungleRewarded alloc] initWithPlacementId: placementIdentifier];
     self.rewardedAdDelegate = [[ALVungleMediationAdapterRewardedAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
     self.rewardedAd.delegate = self.rewardedAdDelegate;
+    self.rewardedAd.adapterAdFormat = @"MARewardedAdapter";
     
     [self.rewardedAd load: bidResponse];
 }
@@ -383,6 +386,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
                                                                                              parameters: parameters
                                                                                               andNotify: delegate];
         self.adViewAd.delegate = self.adViewAdDelegate;
+        self.adViewAd.adapterAdFormat = @"MAAdViewAdapter";
         
         [self.adViewAd load: bidResponse];
     }
@@ -423,7 +427,12 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (BOOL)isAdaptiveAdViewEnabledForParameters:(id<MAAdapterResponseParameters>)parameters
 {
-    if ( ![parameters.serverParameters al_boolForKey: @"adaptive_banner"] ) return NO;
+    BOOL isAdaptiveSeverParams = [parameters.serverParameters al_boolForKey: @"adaptive_banner"];
+    BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
+    
+    if ( !isAdaptiveSeverParams && !isAdaptiveLocalParams ) {
+        return NO;
+    }
     
     if ( [VungleAds isInLine: parameters.thirdPartyAdPlacementIdentifier] )
     {
@@ -431,6 +440,16 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     else
     {
+        // This is the case in which AdUnit is set to "adaptive", but Placement is not inline.
+        NSString *placementId = parameters.thirdPartyAdPlacementIdentifier;
+        NSNumber *adaptiveWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
+        NSNumber *adaptiveMaxHeight = [parameters.localExtraParameters al_numberForKey: @"inline_adaptive_banner_max_height"];
+        NSString *adaptiveSizeMessage = [NSString stringWithFormat: @"AdaptivePlacementMismatch:pid-%@ w-%@ maxh-%@",
+                                         placementId ?: @"unknown",
+                                         adaptiveWidth ?: @"unknown",
+                                         adaptiveMaxHeight ?: @"unknown"];
+        [VungleMediationLogger logError: nil :adaptiveSizeMessage];
+        
         [self userError: @"Please use a Vungle inline placement ID in order to use Vungle adaptive ads"];
         return NO;
     }
@@ -460,6 +479,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.nativeAd = [[VungleNative alloc] initWithPlacementId: placementIdentifier];
     self.nativeAd.delegate = delegate;
     self.nativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
+    self.nativeAd.adapterAdFormat = @"MANativeAdAdapter";
     [self.nativeAd load: bidResponse];
 }
 
