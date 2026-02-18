@@ -444,11 +444,11 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         NSString *placementId = parameters.thirdPartyAdPlacementIdentifier;
         NSNumber *adaptiveWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
         NSNumber *adaptiveMaxHeight = [parameters.localExtraParameters al_numberForKey: @"inline_adaptive_banner_max_height"];
-        NSString *adaptiveSizeMessage = [NSString stringWithFormat: @"AdaptivePlacementMismatch:pid-%@ w-%@ maxh-%@",
+        NSString *adaptiveSizeMessage = [NSString stringWithFormat: @"AdaptiveBannerSizeMismatch:pid-%@|w-%@|maxh-%@",
                                          placementId ?: @"unknown",
                                          adaptiveWidth ?: @"unknown",
                                          adaptiveMaxHeight ?: @"unknown"];
-        [VungleMediationLogger logError: nil :adaptiveSizeMessage];
+        [VungleMediationLogger logErrorForAd:nil message:adaptiveSizeMessage];
         
         [self userError: @"Please use a Vungle inline placement ID in order to use Vungle adaptive ads"];
         return NO;
