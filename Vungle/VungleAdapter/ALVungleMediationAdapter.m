@@ -427,10 +427,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (BOOL)isAdaptiveAdViewEnabledForParameters:(id<MAAdapterResponseParameters>)parameters
 {
-    BOOL isAdaptiveSeverParams = [parameters.serverParameters al_boolForKey: @"adaptive_banner"];
+    BOOL isAdaptiveServerParams = [parameters.serverParameters al_boolForKey: @"adaptive_banner"];
     BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
     
-    if ( !isAdaptiveSeverParams && !isAdaptiveLocalParams ) {
+    if ( !isAdaptiveServerParams && !isAdaptiveLocalParams ) {
         return NO;
     }
     
