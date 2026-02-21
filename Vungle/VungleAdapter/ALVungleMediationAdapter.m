@@ -87,7 +87,6 @@
 // AdView
 @property (nonatomic, strong) VungleBannerView *adViewAd;
 @property (nonatomic, strong) ALVungleMediationAdapterAdViewAdDelegate *adViewAdDelegate;
-@property (nonatomic, assign) BOOL isAdViewNative;
 
 // Native Ad
 @property (nonatomic, strong) VungleNative *nativeAd;
