@@ -467,6 +467,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     }
     return NO;
 }
+
 - (void)updateUserPrivacySettingsForParameters:(id<MAAdapterParameters>)parameters
 {
     NSNumber *hasUserConsent = [parameters hasUserConsent];
