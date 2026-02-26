@@ -490,7 +490,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     self.nativeAd = [[VungleNative alloc] initWithPlacementId: placementIdentifier];
     self.nativeAd.delegate = delegate;
     self.nativeAd.adOptionsPosition = NativeAdOptionsPositionTopRight;
-    self.nativeAd.adapterAdFormat = isAdViewNative ? @"MANativeAdAdapter-adView" : @"MANativeAdAdapter";
+    self.nativeAd.adapterAdFormat = isAdViewNative ? @"MANativeAdAdapter-banner" : @"MANativeAdAdapter";
     [self.nativeAd load: bidResponse];
 }
 
