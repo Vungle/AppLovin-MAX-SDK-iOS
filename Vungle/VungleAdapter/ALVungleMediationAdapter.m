@@ -11,6 +11,8 @@
 
 #define ADAPTER_VERSION @"7.7.1.0"
 
+static NSString *const kALVungleAdaptiveBannerKey = @"adaptive_banner";
+
 @interface ALVungleMediationAdapterInterstitialAdDelegate : NSObject <VungleInterstitialDelegate>
 @property (nonatomic,   weak) ALVungleMediationAdapter *parentAdapter;
 @property (nonatomic, strong) id<MAInterstitialAdapterDelegate> delegate;
@@ -428,8 +430,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (BOOL)isAdaptiveAdViewEnabledForParameters:(id<MAAdapterResponseParameters>)parameters
 {
-    BOOL isAdaptiveServerParams = [parameters.serverParameters al_boolForKey: @"adaptive_banner"];
-    BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
+    BOOL isAdaptiveServerParams = [parameters.serverParameters al_boolForKey: kALVungleAdaptiveBannerKey];
+    BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: kALVungleAdaptiveBannerKey];
     
     if ( !isAdaptiveServerParams && !isAdaptiveLocalParams ) {
         return NO;
@@ -448,8 +450,8 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)logAdaptiveAdViewForBannerPlacement:(id<MAAdapterResponseParameters>)parameters adViewAd:(VungleBannerView *)adViewAd
 {
-    BOOL isAdaptiveServerParams = [parameters.serverParameters al_boolForKey: @"adaptive_banner"];
-    BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: @"adaptive_banner"];
+    BOOL isAdaptiveServerParams = [parameters.serverParameters al_boolForKey: kALVungleAdaptiveBannerKey];
+    BOOL isAdaptiveLocalParams = [parameters.localExtraParameters al_boolForKey: kALVungleAdaptiveBannerKey];
     BOOL isInlinePlacement = [VungleAds isInLine: parameters.thirdPartyAdPlacementIdentifier];
 
     if ( ( isAdaptiveServerParams || isAdaptiveLocalParams ) && !isInlinePlacement ) {
