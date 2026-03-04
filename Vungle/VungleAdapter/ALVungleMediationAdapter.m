@@ -389,7 +389,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         self.adViewAd.adapterAdFormat = @"MAAdViewAdapter";
         [self logAdaptiveAdViewForBannerPlacement: parameters adViewAd:self.adViewAd];
 
-
         [self.adViewAd load: bidResponse];
     }
 }
@@ -459,10 +458,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
         // This is the case in which AdUnit is set to "adaptive", but Placement is not inline.
         NSNumber *adaptiveWidth = [parameters.localExtraParameters al_numberForKey: @"adaptive_banner_width"];
         NSNumber *adaptiveMaxHeight = [parameters.localExtraParameters al_numberForKey: @"inline_adaptive_banner_max_height"];
-        NSString *adaptiveSizeMessage = [NSString stringWithFormat: @"AdaptiveBannerSizeMismatch:w-%@|maxh-%@",
+        NSString *adaptiveSizeMismatchMessage = [NSString stringWithFormat: @"AdaptiveBannerSizeMismatch:w-%@|maxh-%@",
                                          adaptiveWidth ?: @"unknown",
                                          adaptiveMaxHeight ?: @"unknown"];
-        [VungleMediationLogger logErrorForAd:adViewAd message:adaptiveSizeMessage];
+        [VungleMediationLogger logErrorForAd:adViewAd message:adaptiveSizeMismatchMessage];
     }
 }
 
