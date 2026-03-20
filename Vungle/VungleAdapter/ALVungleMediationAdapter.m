@@ -449,7 +449,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)logAdaptiveAdViewForBannerPlacement:(id<MAAdapterResponseParameters>)parameters adViewAd:(VungleBannerView *)adViewAd
 {
-    BOOL isAdaptiveAdView = [self isInlineAdaptiveAdViewForParameters: parameters];
+    BOOL isAdaptiveAdView = [parameters.serverParameters al_boolForKey: kALVungleAdaptiveBannerKey];
     BOOL isInlinePlacement = [VungleAds isInLine: parameters.thirdPartyAdPlacementIdentifier];
     
     if ( isAdaptiveAdView && !isInlinePlacement ) {
