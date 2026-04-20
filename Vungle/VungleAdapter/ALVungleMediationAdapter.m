@@ -228,20 +228,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)showInterstitialAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAInterstitialAdapterDelegate>)delegate
 {
-    if ( [self.interstitialAd canPlayAd] )
-    {
-        [self log: @"Showing interstitial ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
-        
-        UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
-        [self.interstitialAd presentWith: presentingViewController];
-    }
-    else
-    {
-        [self log: @"Failed to show interstitial ad: ad not ready"];
-        [delegate didFailToDisplayInterstitialAdWithError: [MAAdapterError errorWithAdapterError: MAAdapterError.adDisplayFailedError
-                                                                        mediatedNetworkErrorCode: MAAdapterError.adNotReady.code
-                                                                     mediatedNetworkErrorMessage: MAAdapterError.adNotReady.message]];
-    }
+    [self log: @"Showing interstitial ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
+    
+    UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
+    [self.interstitialAd presentWith: presentingViewController];
 }
 
 #pragma mark - MAAppOpenAdapter Methods
@@ -273,20 +263,10 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)showAppOpenAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MAAppOpenAdapterDelegate>)delegate
 {
-    if ( [self.appOpenAd canPlayAd] )
-    {
-        [self log: @"Showing app open ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
-        
-        UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
-        [self.appOpenAd presentWith: presentingViewController];
-    }
-    else
-    {
-        [self log: @"Failed to show app open ad: ad not ready"];
-        [delegate didFailToDisplayAppOpenAdWithError: [MAAdapterError errorWithAdapterError: MAAdapterError.adDisplayFailedError
-                                                                   mediatedNetworkErrorCode: MAAdapterError.adNotReady.code
-                                                                mediatedNetworkErrorMessage: MAAdapterError.adNotReady.message]];
-    }
+    [self log: @"Showing app open ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
+    
+    UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
+    [self.appOpenAd presentWith: presentingViewController];
 }
 
 #pragma mark - MARewardedAdapter Methods
@@ -318,23 +298,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)showRewardedAdForParameters:(id<MAAdapterResponseParameters>)parameters andNotify:(id<MARewardedAdapterDelegate>)delegate
 {
-    if ( [self.rewardedAd canPlayAd] )
-    {
-        [self log: @"Showing rewarded ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
-        
-        // Configure reward from server.
-        [self configureRewardForParameters: parameters];
-        
-        UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
-        [self.rewardedAd presentWith: presentingViewController];
-    }
-    else
-    {
-        [self log: @"Failed to show rewarded ad: ad not ready"];
-        [delegate didFailToDisplayRewardedAdWithError: [MAAdapterError errorWithAdapterError: MAAdapterError.adDisplayFailedError
-                                                                    mediatedNetworkErrorCode: MAAdapterError.adNotReady.code
-                                                                 mediatedNetworkErrorMessage: MAAdapterError.adNotReady.message]];
-    }
+    [self log: @"Showing rewarded ad for placement: %@...", parameters.thirdPartyAdPlacementIdentifier];
+    
+    // Configure reward from server.
+    [self configureRewardForParameters: parameters];
+    
+    UIViewController *presentingViewController = parameters.presentingViewController ?: [ALUtils topViewControllerFromKeyWindow];
+    [self.rewardedAd presentWith: presentingViewController];
 }
 
 #pragma mark - MAAdViewAdapter Methods
