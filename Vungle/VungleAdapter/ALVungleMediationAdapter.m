@@ -208,14 +208,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading %@interstitial ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
     
-    if ( [self shouldFailAdLoadWhenSDKNotInitialized: parameters] && ![VungleAds isInitialized] )
-    {
-        [self log: @"Vungle SDK not successfully initialized: failing interstitial ad load..."];
-        [delegate didFailToLoadInterstitialAdWithError: MAAdapterError.notInitialized];
-        
-        return;
-    }
-    
     [self updateUserPrivacySettingsForParameters: parameters];
     
     self.interstitialAd = [[VungleInterstitial alloc] initWithPlacementId: placementIdentifier];
@@ -243,14 +235,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading %@app open ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
     
-    if ( [self shouldFailAdLoadWhenSDKNotInitialized: parameters] && ![VungleAds isInitialized] )
-    {
-        [self log: @"Vungle SDK not successfully initialized: failing app open ad load..."];
-        [delegate didFailToLoadAppOpenAdWithError: MAAdapterError.notInitialized];
-        
-        return;
-    }
-    
     [self updateUserPrivacySettingsForParameters: parameters];
     
     self.appOpenAdDelegate = [[ALVungleMediationAdapterAppOpenAdDelegate alloc] initWithParentAdapter: self andNotify: delegate];
@@ -277,14 +261,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     BOOL isBiddingAd = [bidResponse al_isValidString];
     NSString *placementIdentifier = parameters.thirdPartyAdPlacementIdentifier;
     [self log: @"Loading %@rewarded ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
-    
-    if ( [self shouldFailAdLoadWhenSDKNotInitialized: parameters] && ![VungleAds isInitialized] )
-    {
-        [self log: @"Vungle SDK not successfully initialized: failing rewarded ad load..."];
-        [delegate didFailToLoadRewardedAdWithError: MAAdapterError.notInitialized];
-        
-        return;
-    }
     
     [self updateUserPrivacySettingsForParameters: parameters];
     
@@ -319,14 +295,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     BOOL isNative = [parameters.serverParameters al_boolForKey: @"is_native"];
     
     [self log: @"Loading %@%@%@ ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), ( isNative ? @"native " : @"" ), adFormatLabel, placementIdentifier];
-    
-    if ( [self shouldFailAdLoadWhenSDKNotInitialized: parameters] && ![VungleAds isInitialized] )
-    {
-        [self log: @"Vungle SDK not successfully initialized: failing %@ ad load...", adFormatLabel];
-        [delegate didFailToLoadAdViewAdWithError: MAAdapterError.notInitialized];
-        
-        return;
-    }
     
     [self updateUserPrivacySettingsForParameters: parameters];
     
@@ -375,14 +343,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     
     [self log: @"Loading %@native ad for placement: %@...", ( isBiddingAd ? @"bidding " : @"" ), placementIdentifier];
     
-    if ( [self shouldFailAdLoadWhenSDKNotInitialized: parameters] && ![VungleAds isInitialized] )
-    {
-        [self log: @"Vungle SDK not successfully initialized: failing native ad load..."];
-        [delegate didFailToLoadNativeAdWithError: MAAdapterError.notInitialized];
-        
-        return;
-    }
-    
     [self updateUserPrivacySettingsForParameters: parameters];
     
     self.nativeAdDelegate = [[ALVungleMediationAdapterNativeAdDelegate alloc] initWithParentAdapter: self
@@ -392,11 +352,6 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 }
 
 #pragma mark - Shared Methods
-
-- (BOOL)shouldFailAdLoadWhenSDKNotInitialized:(id<MAAdapterResponseParameters>)parameters
-{
-    return [parameters.serverParameters al_boolForKey: @"fail_ad_load_when_sdk_not_initialized" defaultValue: YES];
-}
 
 - (BOOL)isAdaptiveAdViewEnabledForParameters:(id<MAAdapterResponseParameters>)parameters
 {
