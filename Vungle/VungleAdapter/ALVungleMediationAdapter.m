@@ -500,8 +500,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 + (MAAdapterError *)toMaxError:(nullable NSError *)vungleError isAdPresentError:(BOOL)adPresentError
 {
-    if ( !vungleError ) return MAAdapterError.unspecified;
-    
+    if ( !vungleError )
+    {
+        [VungleMediationLogger logErrorForAd: nil
+                                     message: @"unspecifiedErrorCode:vungleError=nil"];
+        return MAAdapterError.unspecified;
+    }
+
     int vungleErrorCode = (int) vungleError.code;
     MAAdapterError *adapterError = MAAdapterError.unspecified;
     
@@ -592,7 +597,13 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
             adapterError = MAAdapterError.webViewError;
             break;
     }
-    
+
+    if ( adapterError == MAAdapterError.unspecified )
+    {
+        [VungleMediationLogger logErrorForAd: nil
+                                     message: [NSString stringWithFormat: @"unspecifiedErrorCode:%d", vungleErrorCode]];
+    }
+
     return [MAAdapterError errorWithAdapterError: adapterError
                         mediatedNetworkErrorCode: vungleErrorCode
                      mediatedNetworkErrorMessage: vungleError.localizedDescription];
@@ -981,10 +992,11 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)nativeAdDidLoad:(VungleNative *)nativeAd
 {
-    if ( !nativeAd || self.parentAdapter.nativeAd != nativeAd )
+    if ( self.parentAdapter.nativeAd != nativeAd )
     {
         [self.parentAdapter log: @"Native %@ ad failed to load: no fill", self.adFormat];
         [self.delegate didFailToLoadAdViewAdWithError: MAAdapterError.noFill];
+        [VungleMediationLogger logErrorForAd:nativeAd message:@"nativeAdObjectMismatch"];
         
         return;
     }
@@ -1078,10 +1090,11 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
 
 - (void)nativeAdDidLoad:(VungleNative *)nativeAd
 {
-    if ( !nativeAd || self.parentAdapter.nativeAd != nativeAd )
+    if ( self.parentAdapter.nativeAd != nativeAd )
     {
         [self.parentAdapter log: @"Native ad failed to load: no fill"];
         [self.delegate didFailToLoadNativeAdWithError: MAAdapterError.noFill];
+        [VungleMediationLogger logErrorForAd:nativeAd message:@"nativeAdObjectMismatch"];
         
         return;
     }
@@ -1092,6 +1105,7 @@ static MAAdapterInitializationStatus ALVungleIntializationStatus = NSIntegerMin;
     {
         [self.parentAdapter e: @"Native ad (%@) does not have required assets.", nativeAd];
         [self.delegate didFailToLoadNativeAdWithError: MAAdapterError.missingRequiredNativeAdAssets];
+        [VungleMediationLogger logErrorForAd:nativeAd message:@"missingRequiredNativeAdAssets"];
         
         return;
     }
