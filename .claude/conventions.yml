@@ -1,0 +1,39 @@
+conventions:
+  - id: adapter-structure
+    description: >
+      Each network adapter lives in its own directory named {Network}Adapter/
+      containing AL{Network}MediationAdapter.h and .m files, a podspec file
+      named AppLovinMediation{Network}Adapter.podspec, and a CHANGELOG.md.
+    applies_to: "**/*Adapter*"
+
+  - id: naming-conventions
+    description: >
+      Adapter classes follow the pattern AL{Network}MediationAdapter.
+      All adapters implement the MAAdapter protocol plus format-specific
+      sub-protocols (MAInterstitialAdapter, MARewardedAdapter, MAAdViewAdapter,
+      MANativeAdAdapter). Method names follow Apple Objective-C conventions.
+    applies_to: "**/*.{h,m}"
+
+  - id: ad-format-support
+    description: >
+      Each adapter must declare supported ad formats and implement the
+      corresponding protocol methods. Common formats: interstitial, rewarded,
+      banner/MREC, native, app open. Bidding adapters must implement signal
+      collection methods.
+    applies_to: "**/*Adapter*.m"
+
+  - id: version-management
+    description: >
+      Each adapter has independent versioning via its podspec. The adapter
+      version encodes the underlying SDK version plus a patch digit
+      (e.g., 6.9.1.0 = SDK 6.9.1, adapter patch 0). CHANGELOG.md must be
+      updated with every version bump.
+    applies_to: "**/*.podspec"
+
+  - id: cocoapods-distribution
+    description: >
+      Distribution is exclusively via CocoaPods. Each podspec declares the
+      adapter's dependency on AppLovinSDK and the third-party network SDK.
+      No Swift Package Manager support. Podspecs must specify minimum iOS
+      deployment target.
+    applies_to: "**/*.podspec"

@@ -1,0 +1,27 @@
+review_rules:
+  - path: "**/*MediationAdapter.{h,m}"
+    rules:
+      - Adapter must implement MAAdapter protocol and declare supported ad formats
+      - Bidding adapters must implement signal collection method
+      - Memory management must be correct (no retain cycles in delegate callbacks)
+      - All ad format delegate methods must call back to MAX SDK on main thread
+      - Adapter version string must match podspec version
+
+  - path: "**/*.podspec"
+    rules:
+      - Podspec must declare dependency on AppLovinSDK with minimum version >= 13.0.0
+      - Podspec must declare dependency on the third-party network SDK with exact version
+      - Minimum iOS deployment target must be specified (11.0-12.0 range)
+      - Source files glob must match the adapter directory structure
+      - Version must follow {sdk_major}.{sdk_minor}.{sdk_patch}.{adapter_patch} format
+
+  - path: "**/CHANGELOG.md"
+    rules:
+      - Every version bump must have a corresponding CHANGELOG entry
+      - Entries should note SDK version updates, new format support, and bug fixes
+      - Most recent version must appear at the top
+
+  - path: "**/*Demo*/**/*.swift"
+    rules:
+      - Demo apps should demonstrate all supported ad formats
+      - Ad unit IDs should use test/demo values, not production IDs

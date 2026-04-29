@@ -1,0 +1,24 @@
+{
+  "generated": "2026-03-23T00:00:00Z",
+  "period_days": 180,
+  "since": "2025-09-24",
+  "recent_activity": {
+    "total_commits": 99,
+    "unique_authors": 3,
+    "fix_bug_commits": 0,
+    "first_commit_date": "2025-09-24",
+    "last_commit_date": "2026-03-20",
+    "commits_per_month": {
+      "2025-09": 6,      "2025-10": 26,      "2025-11": 24,      "2025-12": 18,      "2026-01": 17,      "2026-02": 7,      "2026-03": 1
+    }
+  },
+  "top_authors": [
+    {"author": "AppLovin-Mobile-Engineering", "commits": 97},    {"author": "Nana Amoah", "commits": 1},    {"author": "Mian Leow", "commits": 1}
+  ],
+  "file_churn": [
+    {"file": "ByteDance/CHANGELOG.md", "commits": 17},    {"file": "ByteDance/ByteDanceAdapter/ALByteDanceMediationAdapter.m", "commits": 17},    {"file": "ByteDance/ByteDanceAdapter.xcodeproj/project.pbxproj", "commits": 17},    {"file": "ByteDance/AppLovinMediationByteDanceAdapter.podspec", "commits": 17},    {"file": "Yandex/YandexAdapter/ALYandexMediationAdapter.m", "commits": 8},    {"file": "Yandex/YandexAdapter.xcodeproj/project.pbxproj", "commits": 8},    {"file": "Yandex/CHANGELOG.md", "commits": 8},    {"file": "Yandex/AppLovinMediationYandexAdapter.podspec", "commits": 8},    {"file": "MyTarget/MyTargetAdapter/MyTargetAdapter.swift", "commits": 8},    {"file": "MyTarget/MyTargetAdapter.xcodeproj/project.pbxproj", "commits": 8},    {"file": "MyTarget/CHANGELOG.md", "commits": 8},    {"file": "MyTarget/AppLovinMediationMyTargetAdapter.podspec", "commits": 8},    {"file": "Mintegral/CHANGELOG.md", "commits": 8},    {"file": "Mintegral/MintegralAdapter/ALMintegralMediationAdapter.m", "commits": 7},    {"file": "Mintegral/MintegralAdapter.xcodeproj/project.pbxproj", "commits": 7},    {"file": "Mintegral/AppLovinMediationMintegralAdapter.podspec", "commits": 7},    {"file": "Vungle/VungleAdapter/ALVungleMediationAdapter.m", "commits": 6},    {"file": "Vungle/VungleAdapter.xcodeproj/project.pbxproj", "commits": 6},    {"file": "Vungle/CHANGELOG.md", "commits": 6},    {"file": "Vungle/AppLovinMediationVungleAdapter.podspec", "commits": 6},    {"file": "Moloco/MolocoAdapter/MolocoAdapter.swift", "commits": 6},    {"file": "Moloco/MolocoAdapter.xcodeproj/project.pbxproj", "commits": 6},    {"file": "Moloco/CHANGELOG.md", "commits": 6},    {"file": "Moloco/AppLovinMediationMolocoAdapter.podspec", "commits": 6},    {"file": "UnityAds/UnityAdsAdapter/ALUnityAdsMediationAdapter.m", "commits": 5},    {"file": "UnityAds/UnityAdsAdapter.xcodeproj/project.pbxproj", "commits": 5},    {"file": "UnityAds/CHANGELOG.md", "commits": 5},    {"file": "UnityAds/AppLovinMediationUnityAdsAdapter.podspec", "commits": 5},    {"file": "Fyber/FyberAdapter/ALInneractiveMediationAdapter.m", "commits": 5},    {"file": "Fyber/FyberAdapter.xcodeproj/project.pbxproj", "commits": 5},    {"file": "Fyber/CHANGELOG.md", "commits": 5},    {"file": "Fyber/AppLovinMediationFyberAdapter.podspec", "commits": 5},    {"file": "IronSource/IronSourceAdapter/ALIronSourceMediationAdapter.m", "commits": 4},    {"file": "IronSource/IronSourceAdapter.xcodeproj/project.pbxproj", "commits": 4},    {"file": "IronSource/CHANGELOG.md", "commits": 4}
+  ],
+  "bug_hotspots": [
+
+  ]
+}
